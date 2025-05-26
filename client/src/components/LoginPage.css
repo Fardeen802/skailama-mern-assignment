@@ -1,0 +1,70 @@
+/* Full height and width container */
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Left side: 70% width */
+  .left {
+    flex: 0 0 70%;
+    background: #f0f0f0; /* example background */
+    /* You can add image or anything here */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Right side: 30% width */
+  .right {
+    flex: 0 0 30%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  }
+  
+  /* Login form styling */
+  .login-form {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .login-form h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .login-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  
+  .login-form input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .login-form button:hover {
+    background-color: #0056b3;
+  }
+  
