@@ -4,23 +4,35 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import CreateProjectModal from './createProjectModel'; // Make sure this file exists and exports a component
 import { useNavigate } from 'react-router-dom';
+import { createProject, fetchUserProjects } from '../controller/registerController';
 
 const NewProjectPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [projects, setProjects] = useState([]);
   const navigate = useNavigate();
-  const handleCreate = (title) => {
-    setProjects((prev) => [...prev, { title }]);
-    console.log("Project Created:", title);
+  const handleCreate = async(title) => {
+    try {
+      const result = await createProject(title);
+      
+      setProjects((prev) => [...prev, { title }]);
+      console.log("Project Created:", title);
+    } catch (error) {
+      console.log("error",error);
+    }
+   
+   
   };
 
   const getProjects = async () => {
     try {
-      const initialProjects = [
-        { title: "First" },
-        { title: "Second" }
-      ];
-      setProjects(initialProjects);
+      const initialProjects = await fetchUserProjects();
+      if(initialProjects?.data?.message==="SUCCESS"){
+        setProjects(initialProjects?.data?.projectsNames
+        );
+      }
+      console.log("intial",initialProjects?.data?.projectsNames
+      );
+      
     } catch (error) {
       console.error("Error fetching projects", error);
     }
@@ -160,7 +172,7 @@ sx={{
         border: "1px solid #90caf9",
         boxShadow: 3,
       }}
-      onClick={() => navigate('/podcast', { state: { projectTitle: project.title } })}
+      onClick={() => navigate('/podcast', { state: { projectTitle: project?.name,_id:project?._id } })}
     >
       {/* Left - Avatar or Image */}
       <Avatar sx={{ width: 64, height: 64, bgcolor: "#1976d2",borderRadius: 2, }}>SP</Avatar>
@@ -170,7 +182,7 @@ sx={{
         <Typography variant="subtitle" fontWeight={600} sx={{
           alignItems:'flex-start',display:'flex'
         }}>
-          {project.title}
+          {project?.name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Last edited: 2 hours ago

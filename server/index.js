@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const signUpRoute = require('./api/signUp');
 const loginRoute = require('./api/auth');
 const logoutRoute = require('./api/auth');
+const projectsRoute = require('./api/userProjects');
+const fileRoute = require('./api/file');
 const {verifyToken} = require("./utils/tokenManagement");
 const cookieParser = require('cookie-parser');
 
@@ -31,7 +33,8 @@ mongoose.connect(
   });
 // On server (auth.js route maybe)
 
-
+app.use("/api/files",fileRoute);
+app.use("/api/auth",projectsRoute);
 app.use('/api',logoutRoute);
 app.use('/api',loginRoute);
 app.use('/api/signup', signUpRoute); 

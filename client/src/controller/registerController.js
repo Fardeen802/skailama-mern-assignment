@@ -34,5 +34,45 @@ export const signup = async (userData) => {
     console.error('Signup error:', error.response?.data || error.message);
   }
 };
-
+export const createProject = async (title) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/auth/create`, {title}, {
+      withCredentials: true,
+    });
+    console.log('Signup success:', response.data);
+  } catch (error) {
+    console.error('Signup error:', error.response?.data || error.message);
+  }
+};
+export const fetchUserProjects = async () => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/api/auth/projectsList`, {
+      withCredentials: true, // required to send cookie
+    });
+    console.log("Projects:", response.data);
+    return response;
+  } catch (error) {
+    console.error("Failed to fetch projects:", error.response?.data || error.message);
+  }
+};
+export const fetchFilesByProject = async (projectId) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/files/list`, { projectId },{withCredentials:true});
+    return response.data; // array of files
+  } catch (error) {
+    console.error('Failed to fetch files:', error);
+    return [];
+  }
+};
+export const CreateFilesByProject = async (payload) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/files/create`, payload, {
+      withCredentials: true,
+    });
+    return response.data; // created file data
+  } catch (error) {
+    console.error('Failed to create file:', error);
+    return null;
+  }
+};
 

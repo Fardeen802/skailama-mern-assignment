@@ -70,7 +70,7 @@ const verifyToken = (req, res, next) => {
   
     jwt.verify(token, 'ACCESS_SECRET', (err, decoded) => {
       if (err) return res.status(403).json({ message: 'Invalid or expired token' });
-  
+      console.log("Decoded token:", decoded);
       req.user = decoded;
       next();
     });

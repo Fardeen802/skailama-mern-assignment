@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -11,8 +11,9 @@ import {
   Paper,
   TableContainer,
 } from '@mui/material';
+import { fetchFilesByProject } from '../controller/registerController';
 
-const FileTableBox = () => {
+const FileTableBox = ({_id,setSee}) => {
   // Store table rows in state
   const [rows, setRows] = useState([
     { id: 1, name: 'Report 1', uploadDate: '2024-08-20', time: '10:30 AM' },
@@ -30,13 +31,26 @@ const FileTableBox = () => {
   const handleDelete = (id) => {
     setRows(prev => prev.filter(row => row.id !== id));
   };
+  const fetchFiles=async()=>{
+    try {
+      const result = await fetchFilesByProject(_id);
+      return result;
+      
+    } catch (error) {
+      console.log("error",error);
+    }
+    
+  }
+  useEffect(()=>{
+    fetchFiles();
+  },[])
 
   return (
     <Box
   sx={{
     width: '100%',
     maxWidth: 1000,
-    minHeight: 429,
+    minHeight: 420,
     mx: 'auto',
     px: { xs: 1, sm: 2, md: 3 },
     py: 3,
@@ -77,14 +91,23 @@ const FileTableBox = () => {
             <TableCell>{row.uploadDate}</TableCell>
             <TableCell>{row.time}</TableCell>
             <TableCell align="center">
-              <Button variant="outlined" size="small" sx={{ mr: 1 }}>
+              <Button variant="outlined" size="small" sx={{ mr: 1 }}
+                onClick={()=>{setSee(true)}}
+              >
                 View
               </Button>
               <Button
                 variant="contained"
-                color="error"
                 size="small"
                 onClick={() => handleDelete(row.id)}
+                sx={{
+                  backgroundColor: 'white',
+                  color: 'red',
+                  border: '1px solid red',
+                  '&:hover': {
+                    backgroundColor: '#ffe6e6',
+                  },
+                }}
               >
                 Delete
               </Button>

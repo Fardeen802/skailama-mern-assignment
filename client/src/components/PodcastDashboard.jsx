@@ -8,6 +8,7 @@ import {
   useTheme,
   Button,
   Avatar,
+  Stack,
 } from '@mui/material';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import AddIcon from '@mui/icons-material/Add';
@@ -15,49 +16,54 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { logout } from '../controller/registerController';
 import HomeIcon from '@mui/icons-material/Home';
-import { useLocation,useNavigate } from 'react-router-dom';
-import InfoCardList from './InfoCard';
+import { logout } from '../controller/registerController';
+import { useLocation, useNavigate } from 'react-router-dom';
+import InfoCard from './InfoCard';
 import FileTableBox from './FileTableBox';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditableTranscript from './EditableTranscript';
 const drawerWidthExpanded = '25%';
 const drawerWidthCollapsed = '64px';
 
-
-const PodcastDashboard = ({}) => {
+const PodcastDashboard = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const location = useLocation();
   const navigate = useNavigate();
-  const { projectTitle } = location.state || {};
-  useEffect(()=>{
-    if(!projectTitle){
+  const { projectTitle, _id } = location.state || {};
+
+  useEffect(() => {
+    if (!projectTitle) {
       navigate("/dashboard");
     }
+  }, [projectTitle]);
 
-  },[projectTitle])
   const [collapsed, setCollapsed] = useState(false);
-  const [indexed,setIndex] =useState(0);
+  const [indexed, setIndex] = useState(0);
+  const [see, setSee] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableText, setEditableText] = useState("Click to Edit Title");
+
   const toggleSidebar = () => setCollapsed(!collapsed);
-  const handleLogout =async()=>{
+
+  const handleLogout = async () => {
     try {
       const result = await logout();
-      if (result?.data?.message==="Logged out successfully"){
+      if (result?.data?.message === "Logged out successfully") {
         alert('Logged out');
       }
-      
     } catch (error) {
-      console.log("Error",error);
+      console.log("Error", error);
     }
-  }
+  };
 
   const sideBarItems = [
     { icon: <AddIcon />, label: 'Add your Podcasts' },
     { icon: <EditIcon />, label: 'Create & Repurpose' },
     { icon: <ContentCopyIcon />, label: 'Podcast Widget' },
-    {icon:<FavoriteBorderIcon/>,label:'Upgrage'}
-    ]
-  
+    { icon: <FavoriteBorderIcon />, label: 'Upgrade' },
+  ];
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -78,66 +84,63 @@ const PodcastDashboard = ({}) => {
             gap: 2,
             alignItems: collapsed ? 'center' : 'flex-start',
             transition: 'width 0.3s ease',
-            overflow: 'visible',   // <-- add this
+            overflow: 'visible',
           },
         }}
-        
       >
-         
-        {/* Logo & Menu Button */}
-        <Box
-        sx={{
-            display: 'flex',
-            alignItems: 'center',
-            width: '100%',
-            justifyContent: collapsed ? 'center' : 'space-between',
-        }}
-        >
-        <Typography variant="h6" noWrap>
+        {/* Logo & Collapse */}
+        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: collapsed ? 'center' : 'space-between' }}>
+          <Typography variant="h6" noWrap>
             {!collapsed && 'Ques.Ai'}
-        </Typography>
+          </Typography>
         </Box>
 
-{/* Map Button Configs */}
+        {/* Sidebar Buttons */}
         {sideBarItems.map(({ icon, label }, index) => (
-        <Button
+          <Button
             key={index}
             startIcon={icon}
             fullWidth={!collapsed}
-            sx={{ justifyContent: collapsed ? 'center' : 'flex-start',color:'purple' ,backgroundColor: indexed === index ? '#f3e5f5' : 'transparent',}}
-            onClick={()=>{
-                setIndex(index);
+            sx={{
+              justifyContent: collapsed ? 'center' : 'flex-start',
+              color: 'purple',
+              backgroundColor: indexed === index ? '#f3e5f5' : 'transparent',
             }}
-        >
+            onClick={() => {
+              setIndex(index);
+            }}
+          >
             {!collapsed && label}
-        </Button>
+          </Button>
         ))}
-         <IconButton
-    onClick={toggleSidebar}
-    sx={{
-      position: 'absolute',
-      bottom: 100,
-      right: collapsed ? -20 : -24,
-      zIndex: 1300,
-      backgroundColor: '#7E22CE',
-      boxShadow: 1,
-      borderRadius: '50%',
-    ':hover': {
-      backgroundColor: '#7E22CE',
-      cursor: 'pointer',
-    },
-    }}
-  >
-    <KeyboardDoubleArrowLeftIcon IconColor='white' />
-  </IconButton>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 'auto', width: '100%' }}>
-        <Avatar sx={{ width: 32, height: 32 }}>U</Avatar>
-        {!collapsed && <Typography variant="body2">Username</Typography>}
-      </Box>
+
+        <IconButton
+          onClick={toggleSidebar}
+          sx={{
+            position: 'absolute',
+            bottom: 100,
+            right: collapsed ? -20 : -24,
+            zIndex: 1300,
+            backgroundColor: '#7E22CE',
+            boxShadow: 1,
+            borderRadius: '50%',
+            ':hover': {
+              backgroundColor: '#7E22CE',
+              cursor: 'pointer',
+            },
+          }}
+        >
+          <KeyboardDoubleArrowLeftIcon />
+        </IconButton>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 'auto', width: '100%' }}>
+          <Avatar sx={{ width: 32, height: 32 }}>U</Avatar>
+          {!collapsed && <Typography variant="body2">Username</Typography>}
+        </Box>
       </Drawer>
 
       {/* Main Content */}
-      {indexed ===0&& <Box
+      <Box
         sx={{
           flexGrow: 1,
           width: collapsed ? `calc(100% - ${drawerWidthCollapsed})` : `calc(100% - ${drawerWidthExpanded})`,
@@ -146,42 +149,62 @@ const PodcastDashboard = ({}) => {
           transition: 'width 0.3s ease',
         }}
       >
-        
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingX: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  
+        {/* Header */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingX: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <HomeIcon />
-            <Typography sx={{fontFamily:'sans-serif'}} variant="sub-title">Home Page / {projectTitle} / {sideBarItems[indexed]?.label}</Typography>
-            
+            <Typography sx={{ fontFamily: 'sans-serif' }} variant="subtitle1">
+              Home Page / {projectTitle} / {sideBarItems[indexed]?.label}
+            </Typography>
           </Box>
-                <LogoutIcon onClick={handleLogout} />
+          <IconButton
+          onClick={handleLogout}
+          sx={{
+            color: 'red',           // Icon color
+            border: '1px solid red', // Optional: add a red border
+            borderRadius: "100%",        // Make it less round (optional)
+            backgroundColor: 'transparent',
+            '&:hover': {
+              backgroundColor: '#ffe6e6', // Optional: light red hover background
+            },
+          }}
+        >
+          <LogoutIcon />
+        </IconButton>
         </Box>
-        <Typography
-      variant="h4"
-      sx={{ mt: 3, ml:3,fontWeight: 'bold', fontFamily: 'sans-serif',textAlign: 'left' 
 
-       }}
-    >
-      Add Podcast
-    </Typography>
-          <Box sx={{marginTop:'30px',display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',}}>
-          <InfoCardList/>
+        {/* Content */}
+        {!see ? (
+          <>
+            <Typography
+              variant="h4"
+              sx={{ mt: 3, ml: 3, fontWeight: 'bold', fontFamily: 'sans-serif', textAlign: 'left' }}
+            >
+              Add Podcast
+            </Typography>
 
-          </Box>
-          
-          <Box sx={{marginTop:'30px',alignItems:'center'}}>
+            <Box sx={{ marginTop: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Stack spacing={2} direction="row">
+                <InfoCard title="RSS Feed" subtitle="Lorem ipsum dolor sit amet." iconLetter="R" sourceName="RSS" _id={_id} />
+                <InfoCard title="YouTube" subtitle="Upload to your channel." iconLetter="Y" sourceName="YouTube" _id={_id}/>
+                <InfoCard title="Upload File" subtitle="Drag and drop files here." iconLetter="U" sourceName="Computer" _id={_id}/>
+              </Stack>
+            </Box>
 
-          <FileTableBox/>
-          </Box>
-    <Box>
+            <Box sx={{ marginTop: '30px', alignItems: 'center' }}>
+              <FileTableBox _id={_id} setSee={setSee} />
+            </Box>
+          </>
+        ) : (
+          // Editable View
+          <EditableTranscript
+          initialText="Your initial transcript text goes here."
+          onBack={() => setSee(false)}
+          />
 
+
+        )}
       </Box>
-        
-      </Box>}
-      
-      
     </Box>
   );
 };
