@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Drawer,
@@ -14,18 +14,50 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import PodcastsIcon from '@mui/icons-material/Podcasts';
-
+import LogoutIcon from '@mui/icons-material/Logout';
+import { logout } from '../controller/registerController';
+import HomeIcon from '@mui/icons-material/Home';
+import { useLocation,useNavigate } from 'react-router-dom';
+import InfoCardList from './InfoCard';
+import FileTableBox from './FileTableBox';
 const drawerWidthExpanded = '25%';
 const drawerWidthCollapsed = '64px';
 
-const PodcastDashboard = () => {
+
+const PodcastDashboard = ({}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { projectTitle } = location.state || {};
+  useEffect(()=>{
+    if(!projectTitle){
+      navigate("/dashboard");
+    }
 
+  },[projectTitle])
   const [collapsed, setCollapsed] = useState(false);
-const [indexed,setIndex] =useState(0);
+  const [indexed,setIndex] =useState(0);
   const toggleSidebar = () => setCollapsed(!collapsed);
+  const handleLogout =async()=>{
+    try {
+      const result = await logout();
+      if (result?.data?.message==="Logged out successfully"){
+        alert('Logged out');
+      }
+      
+    } catch (error) {
+      console.log("Error",error);
+    }
+  }
+
+  const sideBarItems = [
+    { icon: <AddIcon />, label: 'Add your Podcasts' },
+    { icon: <EditIcon />, label: 'Create & Repurpose' },
+    { icon: <ContentCopyIcon />, label: 'Podcast Widget' },
+    {icon:<FavoriteBorderIcon/>,label:'Upgrage'}
+    ]
+  
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -67,12 +99,7 @@ const [indexed,setIndex] =useState(0);
         </Box>
 
 {/* Map Button Configs */}
-        {[
-        { icon: <AddIcon />, label: 'Add your Podcasts' },
-        { icon: <EditIcon />, label: 'Create & Repurpose' },
-        { icon: <ContentCopyIcon />, label: 'Podcast Widget' },
-        {icon:<FavoriteBorderIcon/>,label:'Upgrage'}
-        ].map(({ icon, label }, index) => (
+        {sideBarItems.map(({ icon, label }, index) => (
         <Button
             key={index}
             startIcon={icon}
@@ -92,16 +119,16 @@ const [indexed,setIndex] =useState(0);
       bottom: 100,
       right: collapsed ? -20 : -24,
       zIndex: 1300,
-      backgroundColor: 'plum',
+      backgroundColor: '#7E22CE',
       boxShadow: 1,
       borderRadius: '50%',
     ':hover': {
-      backgroundColor: 'lightgray',
+      backgroundColor: '#7E22CE',
       cursor: 'pointer',
     },
     }}
   >
-    <KeyboardDoubleArrowLeftIcon />
+    <KeyboardDoubleArrowLeftIcon IconColor='white' />
   </IconButton>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 'auto', width: '100%' }}>
         <Avatar sx={{ width: 32, height: 32 }}>U</Avatar>
@@ -110,7 +137,7 @@ const [indexed,setIndex] =useState(0);
       </Drawer>
 
       {/* Main Content */}
-      <Box
+      {indexed ===0&& <Box
         sx={{
           flexGrow: 1,
           width: collapsed ? `calc(100% - ${drawerWidthCollapsed})` : `calc(100% - ${drawerWidthExpanded})`,
@@ -119,9 +146,42 @@ const [indexed,setIndex] =useState(0);
           transition: 'width 0.3s ease',
         }}
       >
-        <Typography variant="h4">Main Content Area</Typography>
-        <Typography>This is the right-hand side content area (65% width).</Typography>
+        
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingX: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  
+            <HomeIcon />
+            <Typography sx={{fontFamily:'sans-serif'}} variant="sub-title">Home Page / {projectTitle} / {sideBarItems[indexed]?.label}</Typography>
+            
+          </Box>
+                <LogoutIcon onClick={handleLogout} />
+        </Box>
+        <Typography
+      variant="h4"
+      sx={{ mt: 3, ml:3,fontWeight: 'bold', fontFamily: 'sans-serif',textAlign: 'left' 
+
+       }}
+    >
+      Add Podcast
+    </Typography>
+          <Box sx={{marginTop:'30px',display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',}}>
+          <InfoCardList/>
+
+          </Box>
+          
+          <Box sx={{marginTop:'30px',alignItems:'center'}}>
+
+          <FileTableBox/>
+          </Box>
+    <Box>
+
       </Box>
+        
+      </Box>}
+      
+      
     </Box>
   );
 };

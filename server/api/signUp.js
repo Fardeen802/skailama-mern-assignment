@@ -1,45 +1,44 @@
-const express = require("express");
-const User = require("../models/user.model");
-const { generateTokens } = require("../utils/jwt");
-
+const express = require('express');
 const router = express.Router();
+const User = require("../models/user.model");
+const bcrypt = require('bcryptjs');
 
-router.post("/create", async (req, res) => {
+
+router.post('/signup', async (req, res) => {
   try {
-    const { userName, password, phoneNumber } = req.body;
+    const { name, email, password } = req.body;
+    console.log(name, email, password);
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ userName });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Please provide all required fields.' });
     }
 
-    // Create new user
-    const newUser = new User({ userName, password, phoneNumber });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'User with this email already exists.' });
+    }
+
+    // Hash password before saving
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create new user with hashed password
+    const newUser = new User({
+      name: name,
+      email,
+      password: hashedPassword,
+    });
+
     await newUser.save();
 
-    // Generate tokens
-    const { accessToken, refreshToken } = generateTokens({ id: newUser._id });
-
-    // Set cookies
-    // res.cookie("accessToken", accessToken, {
-    //   httpOnly: true,
-    //   // sameSite: "strict",
-    //   // secure: process.env.NODE_ENV === "production", // true in prod
-    //   maxAge: 15 * 60 * 1000, // 15 minutes
-    // });
-
-    // res.cookie("refreshToken", refreshToken, {
-    //   httpOnly: true,
-    //   // sameSite: "strict",
-    //   // secure: process.env.NODE_ENV === "production",
-    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    // });
-
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({ message: 'User created successfully', userId: newUser._id });
   } catch (error) {
-    res.status(500).json({ message: "Signup failed", error: error.message });
+    console.error('Signup error:', error);
+    res.status(500).json({ message: 'Server error during signup' });
   }
 });
+
 
 module.exports = router;

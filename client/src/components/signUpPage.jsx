@@ -1,74 +1,35 @@
-import React, { useState } from "react";
-import "./LoginPage.css";
-import { signup } from "../controller/registerController";
+import React, { useState } from 'react';
+import { signup } from '../controller/registerController';
 
 const SignUpPage = () => {
-  const [signUpForm, setSignUpForm] = useState({
-    email: "",
-    password: "",
-    phoneNumber: "",
-  });
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSignUpForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSignUp = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const result = await signup(signUpForm);
-      // Handle successful signup here (e.g., navigate, show message)
-      console.log("Signup success:", result);
+      const result = await signup(form);
+      setMessage('Signup successful!');
+      console.log(result);
     } catch (error) {
-      console.log("Error while signing up", error);
+      setMessage(error.message);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleSignUp();
-  };
-
   return (
-    <div className="container">
-      <div className="left">
-        {/* Left side content, e.g. image or branding */}
-      </div>
-      <div className="right">
-        <div className="login-form">
-          <h2>Register Account</h2>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <input
-                name="email"
-                placeholder="Enter Email"
-                value={signUpForm.email}
-                onChange={handleChange}
-              />
-              <input
-                type="password"
-                name="password"
-                value={signUpForm.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-              />
-              <input
-                type="tel"
-                name="phoneNumber"
-                value={signUpForm.phoneNumber}
-                onChange={handleChange}
-                placeholder="Enter Phone number"
-              />
-              <button type="submit">Sign Up</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input name="name" placeholder="Name" onChange={handleChange} required />
+      <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
+      <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+      <button type="submit">Sign Up</button>
+      <p>{message}</p>
+    </form>
   );
 };
 
 export default SignUpPage;
+

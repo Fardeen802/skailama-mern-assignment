@@ -4,6 +4,7 @@ import SignUpPage from './components/signUpPage';
 import NewProjectPage from './components/NewProjectPage';
 import PodcastDashboard from './components/PodcastDashboard';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -13,8 +14,8 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/dashboard" element={<NewProjectPage/>}/>
-          <Route path="/podcast" element={<PodcastDashboard/>}/>
+          <Route path="/dashboard" element={<ProtectedRoute element={<NewProjectPage />} />} />
+          <Route path="/podcast" element={<ProtectedRoute element={<PodcastDashboard />} />}/>
         </Routes>
       </div>
     </Router>

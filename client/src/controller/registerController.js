@@ -1,38 +1,38 @@
 import axios from "axios";
 
-const SERVER_URL = "http://localhost:5000";
-export const signup = async (userData) => {
-  try {
-    console.log("trying");
-    const res = await axios.post(`${SERVER_URL}/signup/create`, userData, {
-      withCredentials: true,
-    });
-
-    return res.data;
-  } catch (error) {
-    console.log(error,error?.message);
-  }
-};
-
+const SERVER_URL = "http://localhost:8000";
+const axiosInstance = axios.create({
+  baseURL: SERVER_URL,
+  withCredentials: true, // ✅ this allows sending cookies
+})
 export const login = async (userData) => {
   try {
-    const res = await axios.post(`${SERVER_URL}/login`, userData, {
+    const res = await axios.post(`${SERVER_URL}/api/login`, userData, {
       withCredentials: true,
     });
-    return res.data;
+   
+    return res;
   } catch (error) {
     throw error.response?.data || error;
   }
 };
-
-
 export const logout = async () => {
   try {
-    const res = await axios.post(`${SERVER_URL}/auth/logout`, {}, {
-      withCredentials: true,
-    });
-    return res.data;
+    await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+    window.location.href = '/login'; // or use navigate('/login') if using react-router
   } catch (error) {
-    throw error.response?.data || error;
+    console.error('Logout failed:', error);
   }
 };
+export const signup = async (userData) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/signup`, userData, {
+      withCredentials: true,
+    });
+    console.log('Signup success:', response.data);
+  } catch (error) {
+    console.error('Signup error:', error.response?.data || error.message);
+  }
+};
+
+

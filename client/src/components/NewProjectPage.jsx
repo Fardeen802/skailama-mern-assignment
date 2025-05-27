@@ -3,11 +3,12 @@ import { Box, Typography, Button, IconButton, Avatar } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import CreateProjectModal from './createProjectModel'; // Make sure this file exists and exports a component
+import { useNavigate } from 'react-router-dom';
 
 const NewProjectPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [projects, setProjects] = useState([]);
-
+  const navigate = useNavigate();
   const handleCreate = (title) => {
     setProjects((prev) => [...prev, { title }]);
     console.log("Project Created:", title);
@@ -159,6 +160,7 @@ sx={{
         border: "1px solid #90caf9",
         boxShadow: 3,
       }}
+      onClick={() => navigate('/podcast', { state: { projectTitle: project.title } })}
     >
       {/* Left - Avatar or Image */}
       <Avatar sx={{ width: 64, height: 64, bgcolor: "#1976d2",borderRadius: 2, }}>SP</Avatar>
