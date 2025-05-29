@@ -2,9 +2,6 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user.model');
 const {
-  generateTokens,
-  refreshAccessToken,
-  revokeRefreshToken,
   verifyToken
 } = require('../utils/tokenManagement');
 const jwt = require('jsonwebtoken');

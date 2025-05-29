@@ -16,7 +16,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LogoutIcon from '@mui/icons-material/Logout';
-import HomeIcon from '@mui/icons-material/Home';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { logout } from '../controller/registerController';
 import { useLocation, useNavigate } from 'react-router-dom';
 import InfoCard from './InfoCard';
@@ -162,9 +162,12 @@ const PodcastDashboard = () => {
         {/* Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingX: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <HomeIcon />
-            <Typography sx={{ fontFamily: 'sans-serif' }} variant="subtitle1">
-              Home Page / {projectTitle} / {sideBarItems[indexed]?.label}
+            <HomeOutlinedIcon sx={{height:'30px',width:'30px'}}/>
+            <Typography  sx={{ fontFamily: 'sans-serif' ,fontWeight:'700'}} variant="h6">
+              Home Page / {projectTitle}  /
+            </Typography>
+            <Typography sx={{ fontFamily: 'sans-serif',color:'#7E22CE',fontWeight:'700' }} variant="h6">
+              {sideBarItems[indexed]?.label}
             </Typography>
           </Box>
           <IconButton
