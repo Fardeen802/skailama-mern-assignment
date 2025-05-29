@@ -14,7 +14,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { CreateFilesByProject } from '../controller/registerController';
 
-const InfoCard = ({ _id ,title, subtitle, iconLetter, color = '#1976d2', sourceName = 'Source' }) => {
+const InfoCard = ({ _id ,title, subtitle, iconLetter, color = '#1976d2', sourceName = 'Source',setRows,rows }) => {
   const [open, setOpen] = useState(false);
   
 
@@ -26,15 +26,33 @@ const InfoCard = ({ _id ,title, subtitle, iconLetter, color = '#1976d2', sourceN
   const handleClose = () => setOpen(false);
 
   const handleUpload = async() => {
-    // Your upload logic here, for example console log or API call
     console.log('Uploading:', { _id,name, transcript });
     const result = await CreateFilesByProject({ projectId: _id, filename: name, transcript });
-    if (result?.status===201){
-        console.log(result);
+    if (result){
+      const newItem = result;
+      console.log("new item",result);
+
+      const date = new Date(newItem.uploadedAt); 
+    
+      const uploadDate = date.toISOString().split('T')[0];
+      const time = date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    
+      const formattedItem = {
+        id: rows.length + 1,
+        name: newItem.filename,
+        transcript: newItem.transcript,
+        uploadDate,
+        time,
+        _id:result?._id
+      };
+      console.log("formatted item",formattedItem);
+      setRows((prev) => [formattedItem,...prev ]);
     }
-    // Close dialog after upload
     setOpen(false);
-    // Reset form (optional)
     setName('');
     setTranscript('');
   };
@@ -68,23 +86,46 @@ const InfoCard = ({ _id ,title, subtitle, iconLetter, color = '#1976d2', sourceN
             {subtitle}
           </Typography>
         </Box>
-        <Avatar
-          sx={{
-            bgcolor: color,
-            borderRadius: '10px',
-            width: 80,
-            height: 80,
-          }}
-        >
-          {iconLetter}
-        </Avatar>
+        <img
+  src={iconLetter}
+  alt="icon"
+  style={{
+    backgroundColor: color,
+    borderRadius: '25px',
+    width: 80,
+    height: 80,
+    objectFit: 'cover', // optional: helps keep the image inside bounds
+  }}
+/>
       </Box>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>
           <Box display="flex" alignItems="center" justifyContent="space-between">
             <Box display="flex" alignItems="center" gap={2}>
-              <Avatar sx={{ bgcolor: color }}>{iconLetter}</Avatar>
+              {/* <Avatar sx={{ bgcolor: color }}>{iconLetter}</Avatar> */}
+              <Box
+                sx={{
+                  backgroundColor: color,
+                  borderRadius: '50%',
+                  width: 40,
+                  height: 40,
+                  overflow: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <img
+                  src={iconLetter}
+                  alt="icon"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </Box>
               <Typography variant="h6">Upload from {sourceName}</Typography>
             </Box>
             <IconButton onClick={handleClose}>

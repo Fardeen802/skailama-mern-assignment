@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Project = require('../models/project.model');
 const { verifyToken } = require('../utils/tokenManagement');
+const mongoose = require('mongoose');
 // POST /api/projects - Create a new project for a user
 router.post('/create',verifyToken, async (req, res) => {
     try {
@@ -37,10 +38,43 @@ router.post('/create',verifyToken, async (req, res) => {
       if (!userId) {
         return res.status(401).json({ message: 'User ID not found in token' });
       }
-      const projectsNames = await Project.find({ userId })
-                        .sort({ createdAt: -1 })
-                        .select('name'); // ✅ only include the 'name' field
-    //   const projectNames = projects.map(project => project.name);
+      const projectsNames = await Project.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+        {
+          $lookup: {
+            from: 'files',
+            localField: '_id',
+            foreignField: 'projectId',
+            as: 'files',
+          },
+        },
+        {
+          $addFields: {
+            fileCount: { $size: '$files' },
+            lastEdited: { $max: '$files.updatedAt' },
+            created: {
+              $cond: {
+                if: { $gt: [{ $size: '$files' }, 0] },
+                then: { $min: '$files.uploadedAt' },
+                else: '$createdAt' // or use '$createdAt' if you want actual timestamp
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            fileCount: 1,
+            lastEdited: 1,
+            created: 1,
+          },
+        },
+        { $sort: { lastEdited: -1 } },
+      ]);
+      
+  
+                    
   
       res.status(200).json({ projectsNames,message:"SUCCESS" });
     } catch (error) {

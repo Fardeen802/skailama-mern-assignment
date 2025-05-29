@@ -10,10 +10,10 @@ router.post('/create', async (req, res) => {
       if (!projectId || !filename) {
         return res.status(400).json({ error: 'projectId and filename are required' });
       }
-  
       const newFile = new File({ projectId, filename, transcript });
       const savedFile = await newFile.save();
-  
+   
+      console.log("Saved file",savedFile);
       res.status(201).json(savedFile);
     } catch (error) {
       console.error('Create file error:', error);

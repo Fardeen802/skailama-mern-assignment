@@ -40,6 +40,7 @@ export const createProject = async (title) => {
       withCredentials: true,
     });
     console.log('Signup success:', response.data);
+    return response;
   } catch (error) {
     console.error('Signup error:', error.response?.data || error.message);
   }
@@ -69,6 +70,7 @@ export const CreateFilesByProject = async (payload) => {
     const response = await axios.post(`${SERVER_URL}/api/files/create`, payload, {
       withCredentials: true,
     });
+    console.log("response ",response?.data);
     return response.data; // created file data
   } catch (error) {
     console.error('Failed to create file:', error);

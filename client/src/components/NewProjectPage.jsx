@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button, IconButton, Avatar } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import CreateProjectModal from './createProjectModel'; // Make sure this file exists and exports a component
 import { useNavigate } from 'react-router-dom';
 import { createProject, fetchUserProjects } from '../controller/registerController';
+import purpleLogo from '../assets/purpleLogo.png'
+import sittingPeople from '../assets/sittingPeople.svg'
 
 const NewProjectPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -13,9 +15,11 @@ const NewProjectPage = () => {
   const handleCreate = async(title) => {
     try {
       const result = await createProject(title);
-      
-      setProjects((prev) => [...prev, { title }]);
-      console.log("Project Created:", title);
+      console.log("result from new projects page",result);
+      if (result?.data?.message==="Project created"){
+        setProjects((prev)=>[result?.data?.project,...prev]);
+      }
+
     } catch (error) {
       console.log("error",error);
     }
@@ -27,8 +31,7 @@ const NewProjectPage = () => {
     try {
       const initialProjects = await fetchUserProjects();
       if(initialProjects?.data?.message==="SUCCESS"){
-        setProjects(initialProjects?.data?.projectsNames
-        );
+        setProjects(initialProjects?.data?.projectsNames);
       }
       console.log("intial",initialProjects?.data?.projectsNames
       );
@@ -41,34 +44,58 @@ const NewProjectPage = () => {
   useEffect(() => {
     getProjects();
   }, []);
-
+  const formatLastEdited = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+  
+    const isToday = date.toDateString() === now.toDateString();
+  
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+  
+    if (isToday) {
+      return `${date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      })}`;
+    } else if (isYesterday) {
+      return `Yesterday`;
+    } else {
+      return `${date.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })}`;
+    }
+  };
+  
   return (
     <Box sx={{ minHeight: '100vh', p: 4, boxSizing: 'border-box' }}>
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={6}>
         <Box display="flex" alignItems="center" gap={1}>
-          <img src="/logo.svg" alt="Ques.AI" style={{ height: 40 }} />
-          <Typography variant="h6" color="primary" fontWeight="bold">
-            Ques.<span style={{ color: '#8B5CF6' }}>AI</span>
-          </Typography>
+          <img src={purpleLogo} alt="Ques.AI" style={{ height: 40 }} />
+          
         </Box>
 
         <Box display="flex" alignItems="center" gap={2}>
-          <IconButton><SettingsIcon sx={{ fontSize: 28 }} /></IconButton>
-          <IconButton><NotificationsNoneIcon sx={{ fontSize: 28 }} /></IconButton>
+          <IconButton><SettingsOutlinedIcon sx={{ fontSize: 28,color:'black' }} /></IconButton>
+          <IconButton><NotificationsNoneIcon sx={{ fontSize: 28,color:'black',ml:"-3px" }} /></IconButton>
         </Box>
       </Box>
 
       {/* Content */}
       <Box textAlign="center" display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt={8}>
-       { !projects?(
+       { projects.length === 0?(
         <>
-        <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
+        <Typography variant="h4" fontWeight="bold" color="#7E22CE" gutterBottom>
           Create a New Project
         </Typography>
 
         <img
-          src="/illustration.png"
+          src={sittingPeople}
           alt="Create project"
           style={{ width: '100%', maxWidth: 400, margin: '24px 0' }}
         />
@@ -106,7 +133,7 @@ const NewProjectPage = () => {
   // Right-aligned when there are projects
   <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" mt={4}>
   <Box>
-    <Typography variant="h4" fontWeight="bold" color='purple'>
+    <Typography variant="h4" fontWeight="bold" color='#7E22CE'>
       Projects
     </Typography>
   </Box>
@@ -184,8 +211,13 @@ sx={{
         }}>
           {project?.name}
         </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{textAlign:'left'}}>
+        {project?.fileCount} Files 
+        </Typography>
         <Typography variant="body2" color="text.secondary">
-          Last edited: 2 hours ago
+        {project?.fileCount !== 0 
+  ? `Last Edited At:${formatLastEdited(project?.lastEdited)} `
+  : `Created At: ${formatLastEdited(project?.created) }`}
         </Typography>
       </Box>
     </Box>

@@ -23,6 +23,10 @@ import InfoCard from './InfoCard';
 import FileTableBox from './FileTableBox';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditableTranscript from './EditableTranscript';
+import purpleLogo from '../assets/purpleLogo.png';
+import youTube from "../assets/youTube.png"
+import rss from "../assets/rss.png"
+import upload from "../assets/upload.png"
 const drawerWidthExpanded = '25%';
 const drawerWidthCollapsed = '64px';
 
@@ -64,7 +68,8 @@ const PodcastDashboard = () => {
     { icon: <ContentCopyIcon />, label: 'Podcast Widget' },
     { icon: <FavoriteBorderIcon />, label: 'Upgrade' },
   ];
-
+  const [rows, setRows] = useState([
+  ]);
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* Sidebar */}
@@ -91,7 +96,12 @@ const PodcastDashboard = () => {
         {/* Logo & Collapse */}
         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: collapsed ? 'center' : 'space-between' }}>
           <Typography variant="h6" noWrap>
-            {!collapsed && 'Ques.Ai'}
+            {!collapsed && <img
+        src={purpleLogo}
+        alt="Ques.ai"
+        style={{ width: '150px', marginBottom: '1rem' ,marginTop:'1rem'}}
+      />
+      } 
           </Typography>
         </Box>
 
@@ -185,14 +195,19 @@ const PodcastDashboard = () => {
 
             <Box sx={{ marginTop: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <Stack spacing={2} direction="row">
-                <InfoCard title="RSS Feed" subtitle="Lorem ipsum dolor sit amet." iconLetter="R" sourceName="RSS" _id={_id} />
-                <InfoCard title="YouTube" subtitle="Upload to your channel." iconLetter="Y" sourceName="YouTube" _id={_id}/>
-                <InfoCard title="Upload File" subtitle="Drag and drop files here." iconLetter="U" sourceName="Computer" _id={_id}/>
+                <InfoCard title="RSS Feed" subtitle="Lorem ipsum dolor sit amet." iconLetter={rss} sourceName="RSS" _id={_id} setRows={setRows} rows={rows} />
+                <InfoCard title="YouTube" subtitle="Upload to your channel." iconLetter={youTube} sourceName="YouTube" _id={_id} setRows={setRows} rows={rows}/>
+                <InfoCard title="Upload File" subtitle="Drag and drop files here." iconLetter={upload} sourceName="Computer" _id={_id} setRows={setRows} rows={rows}/>
               </Stack>
             </Box>
 
-            <Box sx={{ marginTop: '30px', alignItems: 'center' }}>
-              <FileTableBox _id={_id} setSee={setSee} />
+            <Box sx={{ marginTop: '30px',
+    maxHeight: '500px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',}}>
+              <FileTableBox _id={_id} setSee={setSee} rows={rows} setRows={setRows} />
             </Box>
           </>
         ) : (
