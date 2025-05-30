@@ -7,7 +7,7 @@ const signUpRoute = require('./api/signUp');
 const authRoute = require('./api/auth');
 const projectsRoute = require('./api/userProjects');
 const fileRoute = require('./api/file');
-const { verifyToken } = require('./utils/tokenManagement');
+const { verifyToken } = require('./utils/tokenManagement'); // ✅ Required for verify-token route
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
@@ -28,6 +28,19 @@ app.options(/.*/, cors(corsOptions)); // Express 5 compatible wildcard handling
 
 app.use(cookieParser());
 app.use(express.json());
+
+// ✅ NEW: Add verify-token route with detailed logging
+app.get('/api/verify-token', verifyToken, (req, res) => {
+  console.log('✅ Token verification successful');
+  console.log('User data:', req.user);
+  console.log('Cookies present:', Object.keys(req.cookies));
+  
+  res.status(200).json({
+    message: 'Token is valid',
+    user: req.user,
+    cookies: Object.keys(req.cookies)
+  });
+});
 
 // Test routes
 app.get('/test', (req, res) => {

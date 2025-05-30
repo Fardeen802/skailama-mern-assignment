@@ -17,36 +17,47 @@ const axiosInstance = axios.create({
 const PublicRoute = ({ element }) => {
   const [authorized, setAuthorized] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log('Checking authentication...');
+        console.log('🔍 Checking authentication...');
+        console.log('Current cookies:', document.cookie);
+        
         const response = await axiosInstance.get('/api/verify-token');
-        console.log('Auth check response:', response.data);
+        console.log('✅ Auth check response:', response.data);
         setAuthorized(true);
       } catch (error) {
-        console.log('Auth check failed:', error.response?.data || error.message);
+        console.log('❌ Auth check failed:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
         setAuthorized(false);
         setError(error.response?.data?.message || 'Authentication failed');
+      } finally {
+        setLoading(false);
       }
     };
 
     checkAuth();
   }, []);
 
-  if (authorized === null) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <div>Loading authentication status...</div>;
   }
 
   if (authorized) {
+    console.log('✅ User is authorized, redirecting to dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 
   if (error) {
-    console.log('Auth error:', error);
+    console.log('❌ Auth error:', error);
   }
 
+  console.log('ℹ️ User is not authorized, showing public route');
   return element;
 };
 
