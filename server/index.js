@@ -23,8 +23,9 @@ const corsOptions = {
   maxAge: 86400 // 24 hours
 };
 
+// Apply CORS middleware with regex pattern
 app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions)); // Express 5 compatible wildcard handling
+app.options(/.*/, cors(corsOptions)); // Express 5 compliant CORS preflight
 
 app.use(cookieParser());
 app.use(express.json());
@@ -93,8 +94,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Catch-all route for undefined endpoints
-app.use('*', (req, res) => {
+// Catch-all route for undefined endpoints using regex pattern
+app.use(/.*/, (req, res) => {
   console.log('❌ Route not found:', req.originalUrl);
   res.status(404).json({
     message: 'Route not found',
