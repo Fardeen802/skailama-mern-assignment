@@ -16,16 +16,36 @@ const axiosInstance = axios.create({
 
 const PublicRoute = ({ element }) => {
   const [authorized, setAuthorized] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    axiosInstance
-      .get('/api/verify-token')
-      .then(() => setAuthorized(true))
-      .catch(() => setAuthorized(false));
+    const checkAuth = async () => {
+      try {
+        console.log('Checking authentication...');
+        const response = await axiosInstance.get('/api/verify-token');
+        console.log('Auth check response:', response.data);
+        setAuthorized(true);
+      } catch (error) {
+        console.log('Auth check failed:', error.response?.data || error.message);
+        setAuthorized(false);
+        setError(error.response?.data?.message || 'Authentication failed');
+      }
+    };
+
+    checkAuth();
   }, []);
 
-  if (authorized === null) return <div>Loading...</div>;
-  if (authorized) return <Navigate to="/dashboard" replace />;
+  if (authorized === null) {
+    return <div>Loading...</div>;
+  }
+
+  if (authorized) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (error) {
+    console.log('Auth error:', error);
+  }
 
   return element;
 };
