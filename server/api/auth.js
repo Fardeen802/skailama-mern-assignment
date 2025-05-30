@@ -12,22 +12,22 @@ const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 router.post('/login', async (req, res) => {
   try {
+    console.log('🔍 Login attempt received:', { email: req.body.email });
     const { email, password } = req.body;
-    console.log('Login attempt for email:', email);
 
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      console.log('User not found:', email);
+      console.log('❌ User not found:', email);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) {
-      console.log('Password mismatch for user:', email);
+      console.log('❌ Password mismatch for user:', email);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    console.log('Login successful for user:', email);
+    console.log('✅ Login successful for user:', email);
     const accessToken = jwt.sign({ userId: existingUser._id }, ACCESS_SECRET, { expiresIn: '15m' });
     const refreshToken = jwt.sign({ userId: existingUser._id }, REFRESH_SECRET, { expiresIn: '7d' });
 
@@ -49,16 +49,23 @@ router.post('/login', async (req, res) => {
       path: '/'
     });
 
-    return res.status(200).json({ message: 'Login successful' });
+    return res.status(200).json({ 
+      message: 'Login successful',
+      user: {
+        id: existingUser._id,
+        email: existingUser.email,
+        name: existingUser.name
+      }
+    });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ Login error:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 });
 
 // router.post('/refresh-token', refreshAccessToken);
 router.get('/verify-token', verifyToken, (req, res) => {
-  res.json({ valid: true });
+  res.json({ valid: true, user: req.user });
 });
 
 router.post('/logout', (req, res) => {

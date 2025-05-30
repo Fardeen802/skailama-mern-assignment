@@ -78,9 +78,9 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('❌ MongoDB connection error:', err);
 });
 
-// API routes
+// API routes - Order matters!
+app.use('/api/auth', authRoute);  // This should handle /api/auth/login
 app.use('/api/signup', signUpRoute);
-app.use('/api/auth', authRoute);
 app.use('/api/projects', projectsRoute);
 app.use('/api/files', fileRoute);
 
@@ -89,16 +89,16 @@ app.use((err, req, res, next) => {
   console.error('❌ Error:', err.stack);
   res.status(500).json({
     message: 'Something went wrong!',
-    path: req.path,
-    params: req.params
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
 
 // Catch-all route for undefined endpoints
-app.use('/{*splat}', (req, res) => {
+app.use('*', (req, res) => {
+  console.log('❌ Route not found:', req.originalUrl);
   res.status(404).json({
     message: 'Route not found',
-    path: req.path
+    path: req.originalUrl
   });
 });
 
