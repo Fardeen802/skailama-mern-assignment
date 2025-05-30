@@ -6,7 +6,7 @@ const ProtectedRoute = ({ element }) => {
   const [authorized, setAuthorized] = useState(null); // ← FIXED
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/verify-token', { withCredentials: true })
+    axios.get('https://skailama-mern-assignment.onrender.com/api/verify-token', { withCredentials: true })
     .then(() => setAuthorized(true))
     .catch(() => setAuthorized(false));
   }, []);

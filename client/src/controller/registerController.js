@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const SERVER_URL = "http://localhost:8000";
+const SERVER_URL = "https://skailama-mern-assignment.onrender.com";
 const axiosInstance = axios.create({
   baseURL: SERVER_URL,
   withCredentials: true,
@@ -18,7 +18,7 @@ export const login = async (userData) => {
 };
 export const logout = async () => {
   try {
-    await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
+    await axios.post(`${SERVER_URL}/api/logout`, {}, { withCredentials: true });
     window.location.href = '/login'; 
   } catch (error) {
     console.error('Logout failed:', error);
