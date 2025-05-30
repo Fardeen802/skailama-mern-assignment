@@ -1,16 +1,20 @@
 import axios from "axios";
 
 const SERVER_URL = "https://ques-ai-backend-ka8z.onrender.com";
+
 const axiosInstance = axios.create({
   baseURL: SERVER_URL,
   withCredentials: true,
-})
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});
+
 export const login = async (userData) => {
   try {
     console.log('Attempting login with:', { ...userData, password: '***' });
-    const res = await axios.post(`${SERVER_URL}/api/login`, userData, {
-      withCredentials: true,
-    });
+    const res = await axiosInstance.post('/api/login', userData);
     console.log('Login response:', res.data);
     return res;
   } catch (error) {
@@ -22,14 +26,16 @@ export const login = async (userData) => {
     throw error.response?.data || error;
   }
 };
+
 export const logout = async () => {
   try {
-    await axios.post(`${SERVER_URL}/api/logout`, {}, { withCredentials: true });
+    await axiosInstance.post('/api/logout');
     window.location.href = '/login'; 
   } catch (error) {
     console.error('Logout failed:', error);
   }
 };
+
 export const signup = async (userData) => {
   try {
     const response = await axios.post(`${SERVER_URL}/api/signup`, userData, {
@@ -40,6 +46,7 @@ export const signup = async (userData) => {
     console.error('Signup error:', error.response?.data || error.message);
   }
 };
+
 export const createProject = async (title) => {
   try {
     const response = await axios.post(`${SERVER_URL}/api/auth/create`, {title}, {
@@ -51,6 +58,7 @@ export const createProject = async (title) => {
     console.error('Signup error:', error.response?.data || error.message);
   }
 };
+
 export const fetchUserProjects = async () => {
   try {
     const response = await axios.get(`${SERVER_URL}/api/auth/projectsList`, {
@@ -62,6 +70,7 @@ export const fetchUserProjects = async () => {
     console.error("Failed to fetch projects:", error.response?.data || error.message);
   }
 };
+
 export const fetchFilesByProject = async (projectId) => {
   try {
     const response = await axios.post(`${SERVER_URL}/api/files/list`, { projectId },{withCredentials:true});
@@ -71,6 +80,7 @@ export const fetchFilesByProject = async (projectId) => {
     return [];
   }
 };
+
 export const DeleteFilesOfProject = async (_id) => {
   try {
     const response = await axios.post(`${SERVER_URL}/api/files/delete`, { _id },{withCredentials:true});
@@ -81,6 +91,7 @@ export const DeleteFilesOfProject = async (_id) => {
     return [];
   }
 };
+
 export const CreateFilesByProject = async (payload) => {
   try {
     const response = await axios.post(`${SERVER_URL}/api/files/create`, payload, {

@@ -12,11 +12,22 @@ const {verifyToken} = require("./utils/tokenManagement");
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
+// CORS configuration
+const corsOptions = {
+  origin: 'https://skailama-mern-assignment.onrender.com',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
 
-app.use(cors({
-  origin: ['https://ques-ai-backend-ka8z.onrender.com', 'http://localhost:3000'],
-  credentials: true
-}));
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
 app.use(cookieParser());
 app.use(express.json()); 
 

@@ -1,16 +1,27 @@
 // components/PublicRoute.tsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Navigate } from 'react-router-dom';
+import axios from 'axios';
+
+const SERVER_URL = "https://ques-ai-backend-ka8z.onrender.com";
+
+const axiosInstance = axios.create({
+  baseURL: SERVER_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});
 
 const PublicRoute = ({ element }) => {
   const [authorized, setAuthorized] = useState(null);
 
   useEffect(() => {
-    axios
-      .get('https://ques-ai-backend-ka8z.onrender.com/api/verify-token', { withCredentials: true })
-      .then(() => setAuthorized(true))   // already logged in
-      .catch(() => setAuthorized(false)); // not logged in
+    axiosInstance
+      .get('/api/verify-token')
+      .then(() => setAuthorized(true))
+      .catch(() => setAuthorized(false));
   }, []);
 
   if (authorized === null) return <div>Loading...</div>;
