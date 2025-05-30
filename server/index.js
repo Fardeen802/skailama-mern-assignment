@@ -4,8 +4,7 @@ const PORT = process.env.PORT || 8000;
 const cors = require('cors');
 const mongoose = require('mongoose');
 const signUpRoute = require('./api/signUp');
-const loginRoute = require('./api/auth');
-const logoutRoute = require('./api/auth');
+const authRoute = require('./api/auth');
 const projectsRoute = require('./api/userProjects');
 const fileRoute = require('./api/file');
 const { verifyToken } = require('./utils/tokenManagement');
@@ -24,11 +23,8 @@ const corsOptions = {
   maxAge: 86400 // 24 hours
 };
 
-// Apply CORS middleware
 app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+app.options(/.*/, cors(corsOptions)); // Express 5 compatible wildcard handling
 
 app.use(cookieParser());
 app.use(express.json());
@@ -64,23 +60,20 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
-  console.log('MongoDB connected');
+  console.log('✅ MongoDB connected');
 }).catch((err) => {
-  console.error('MongoDB connection error:', err);
+  console.error('❌ MongoDB connection error:', err);
 });
 
 // API routes
-app.use('/api/files', fileRoute);
-app.use('/api/auth', projectsRoute);
-app.use('/api', logoutRoute);
-app.use('/api', loginRoute);
 app.use('/api/signup', signUpRoute);
+app.use('/api/auth', authRoute);
+app.use('/api/projects', projectsRoute);
+app.use('/api/files', fileRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  console.error('Request path:', req.path);
-  console.error('Request params:', req.params);
+  console.error('❌ Error:', err.stack);
   res.status(500).json({
     message: 'Something went wrong!',
     path: req.path,
@@ -88,7 +81,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Catch-all route for undefined routes
+// Catch-all route for undefined endpoints
 app.use('/{*splat}', (req, res) => {
   res.status(404).json({
     message: 'Route not found',
@@ -96,6 +89,7 @@ app.use('/{*splat}', (req, res) => {
   });
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
