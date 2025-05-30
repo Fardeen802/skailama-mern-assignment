@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 export const login = async (userData) => {
   try {
     console.log('Attempting login with:', { ...userData, password: '***' });
-    const res = await axiosInstance.post('/api/login', userData);
+    const res = await axiosInstance.post('/api/auth/login', userData);
     console.log('Login response:', res.data);
     return res;
   } catch (error) {
