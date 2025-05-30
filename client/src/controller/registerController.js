@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const SERVER_URL = "https://skailama-mern-assignment.onrender.com";
+const SERVER_URL = "https://ques-ai-backend-ka8z.onrender.com";
 const axiosInstance = axios.create({
   baseURL: SERVER_URL,
   withCredentials: true,
