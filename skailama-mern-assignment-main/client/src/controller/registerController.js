@@ -7,18 +7,12 @@ const axiosInstance = axios.create({
 })
 export const login = async (userData) => {
   try {
-    console.log('Attempting login with:', { ...userData, password: '***' });
     const res = await axios.post(`${SERVER_URL}/api/login`, userData, {
       withCredentials: true,
     });
-    console.log('Login response:', res.data);
+   
     return res;
   } catch (error) {
-    console.error('Login error details:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
     throw error.response?.data || error;
   }
 };
