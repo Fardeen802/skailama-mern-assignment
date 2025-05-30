@@ -20,6 +20,31 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json()); 
 
+// Test routes
+app.get('/test', (req, res) => {
+  res.json({ message: 'Server is running!' });
+});
+
+app.get('/api/test-auth', verifyToken, (req, res) => {
+  res.json({ message: 'Authentication is working!', user: req.user });
+});
+
+app.get('/api/test-cookie', (req, res) => {
+  res.json({ 
+    message: 'Cookie test',
+    cookies: req.cookies,
+    headers: req.headers
+  });
+});
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV
+  });
+});
 
 mongoose.connect(
     process.env.MONGODB_URI ,
