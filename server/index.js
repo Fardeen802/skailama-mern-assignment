@@ -14,7 +14,7 @@ require('dotenv').config();
 
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://skailama-mern-assignment.onrender.com',
   credentials: true
 }));
 app.use(cookieParser());

@@ -216,8 +216,8 @@ sx={{
         </Typography>
         <Typography variant="body2" color="text.secondary">
         {project?.fileCount !== 0 
-  ? `Last Edited At:${formatLastEdited(project?.lastEdited)} `
-  : `Created At: ${formatLastEdited(project?.created) }`}
+  ? `Last Edited:${formatLastEdited(project?.lastEdited)} `
+  : `Created on: ${formatLastEdited(project?.created) }`}
         </Typography>
       </Box>
     </Box>
