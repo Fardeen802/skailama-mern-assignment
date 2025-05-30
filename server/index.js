@@ -10,6 +10,7 @@ const projectsRoute = require('./api/userProjects');
 const fileRoute = require('./api/file');
 const {verifyToken} = require("./utils/tokenManagement");
 const cookieParser = require('cookie-parser');
+require('dotenv').config();
 
 
 app.use(cors({
@@ -21,7 +22,7 @@ app.use(express.json());
 
 
 mongoose.connect(
-    "mongodb+srv://fardeenjobs:e54Cx4oRtalq6N2d@skailama.1krevuo.mongodb.net/myDatabaseName?retryWrites=true&w=majority",
+    process.env.MONGODB_URI ,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

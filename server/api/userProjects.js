@@ -3,10 +3,10 @@ const router = express.Router();
 const Project = require('../models/project.model');
 const { verifyToken } = require('../utils/tokenManagement');
 const mongoose = require('mongoose');
-// POST /api/projects - Create a new project for a user
+
 router.post('/create',verifyToken, async (req, res) => {
     try {
-      // Assuming req.user is set by auth middleware
+  
       const userId = req.user.userId;
       const { title } = req.body;
         console.log("UserId",userId);
@@ -56,7 +56,7 @@ router.post('/create',verifyToken, async (req, res) => {
               $cond: {
                 if: { $gt: [{ $size: '$files' }, 0] },
                 then: { $min: '$files.uploadedAt' },
-                else: '$createdAt' // or use '$createdAt' if you want actual timestamp
+                else: '$createdAt'
               },
             },
           },

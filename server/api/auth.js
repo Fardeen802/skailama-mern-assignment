@@ -6,6 +6,9 @@ const {
 } = require('../utils/tokenManagement');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+require('dotenv').config();
+const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 router.post('/login', async (req, res) => {
   try {
@@ -21,19 +24,19 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const accessToken = jwt.sign({ userId: existingUser._id }, 'ACCESS_SECRET', { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ userId: existingUser._id }, 'REFRESH_SECRET', { expiresIn: '7d' });
+    const accessToken = jwt.sign({ userId: existingUser._id }, ACCESS_SECRET, { expiresIn: '15m' });
+    const refreshToken = jwt.sign({ userId: existingUser._id }, REFRESH_SECRET, { expiresIn: '7d' });
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: false, // true in production (HTTPS)
+      secure: process.env.NODE_ENV === 'production', 
       sameSite: 'Strict',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false, // true in production
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'Strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -54,12 +57,12 @@ router.post('/logout', (req, res) => {
   res.clearCookie('accessToken', {
     httpOnly: true,
     sameSite: 'Strict',
-    secure: false, // true in production
+    secure: process.env.NODE_ENV === 'production', // true in production
   });
   res.clearCookie('refreshToken', {
     httpOnly: true,
     sameSite: 'Strict',
-    secure: false, // true in production
+    secure: process.env.NODE_ENV === 'production', // true in production
   });
 
   return res.status(200).json({ message: 'Logged out successfully' });
