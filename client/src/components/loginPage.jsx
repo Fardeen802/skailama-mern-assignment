@@ -11,17 +11,29 @@ import {
   Paper,
   Checkbox,
   FormControlLabel,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
-
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import QuesLogo from '../assets/QuesLogo.svg';
 import logo from '../assets/logo.svg';
 import Maskgroup from '../assets/Maskgroup.svg';
 import google from '../assets/google.png'
 import '@fontsource/poppins';
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState('hello@gmail.com');
   const [password, setPassword] = useState('123456');
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+ 
+  
+  
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
+  };
 
   const handleLogin = async () => {
     try {
@@ -167,11 +179,23 @@ Supercharge Your Distribution{"\n"} using our AI assistant!
 
       <TextField
         label="Password"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
         variant="outlined"
         fullWidth
         margin="normal"
         value={password}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={togglePasswordVisibility}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
         onChange={(e) => setPassword(e.target.value)}
       />
 
@@ -270,7 +294,7 @@ Supercharge Your Distribution{"\n"} using our AI assistant!
     <Box
       component="span"
       sx={{ color: '#7E22CE', cursor: 'pointer', fontWeight: 500 }}
-      onClick={() => console.log('Redirect to create account')}
+      onClick={() => navigate('/signup')}
     >
       Create one
     </Box>

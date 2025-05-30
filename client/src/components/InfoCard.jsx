@@ -136,7 +136,8 @@ const InfoCard = ({ _id ,title, subtitle, iconLetter, color = '#1976d2', sourceN
           
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField
-
+          sx={{marginTop:'8px'}}
+            label="Name"
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}

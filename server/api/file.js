@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const File = require("../models/file.model");
+const mongoose = require('mongoose');
 
 // Create a new file for a given project
 router.post('/create', async (req, res) => {
@@ -21,6 +22,27 @@ router.post('/create', async (req, res) => {
     }
   });
 
+  router.post('/delete', async (req, res) => {
+    try {
+      const { _id } = req.body;
+      console.log("_id",_id);
+      if (!_id) {
+        return res.status(400).json({ error: '_id is required' });
+      }
+  
+      const result = await File.findByIdAndDelete(_id);
+  
+      if (!result) {
+        return res.status(404).json({ error: 'File not found' });
+      }
+  
+      res.json({ message: 'SUCCESS' });
+    } catch (error) {
+      console.error('Error deleting in server:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 // Get all files for a specific project
 router.post('/list', async (req, res) => {
     const { projectId } = req.body;

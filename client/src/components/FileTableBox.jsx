@@ -10,18 +10,19 @@ import {
   Button,
   Paper,
   TableContainer,
+  IconButton,
 } from '@mui/material';
-import { fetchFilesByProject } from '../controller/registerController';
+import { DeleteFilesOfProject, fetchFilesByProject } from '../controller/registerController';
+import cloud_upload from "../assets/cloud_upload.png"
 
 const FileTableBox = ({_id,setSee,rows,setRows}) => {
-  // Store table rows in state
   
 
   function formatReports(data) {
     return data.map((item, index) => {
       const date = new Date(item.uploadedAt);
       const uploadDate = date.toISOString().split('T')[0];
-  
+      console.log(data);
       const time = date.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
@@ -33,13 +34,19 @@ const FileTableBox = ({_id,setSee,rows,setRows}) => {
         name: item.filename,
         uploadDate,
         time,
-        _id:data?._id
+        _id:item?._id
       };
     });
   }
   // Delete row by filtering it out
-  const handleDelete = (id) => {
-    setRows(prev => prev.filter(row => row.id !== id));
+  const handleDelete = async(id) => {
+    console.log("delete row",rows,id);
+    const result = await DeleteFilesOfProject(id);
+    if (result?.message==="SUCCESS"){
+      console.log("result from hadnle,",result);
+      setRows(prev => prev.filter(row => row._id !== id));
+    }
+    
   };
   const fetchFiles=async()=>{
     try {
@@ -82,7 +89,7 @@ const FileTableBox = ({_id,setSee,rows,setRows}) => {
       flexDirection: 'column',
     }}
   >
-    <Typography
+    {rows.length!=0 &&(<Typography
       variant="h6"
       fontWeight={600}
       sx={{
@@ -92,7 +99,7 @@ const FileTableBox = ({_id,setSee,rows,setRows}) => {
       }}
     >
       Your Files
-    </Typography>
+    </Typography>)}
   
     <TableContainer
       // component={Paper}
@@ -104,13 +111,13 @@ const FileTableBox = ({_id,setSee,rows,setRows}) => {
     >
       <Table size="small">
         <TableHead sx={{backgroundColor:'#EDEDED'}}>
-          <TableRow >
+          {rows.length!=0 &&(<TableRow >
             <TableCell>No</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Upload Date</TableCell>
             <TableCell>Time</TableCell>
             <TableCell align="center">Action</TableCell>
-          </TableRow>
+          </TableRow>)}
         </TableHead>
         <TableBody>
           {rows.map((row, idx) => (
@@ -131,7 +138,7 @@ const FileTableBox = ({_id,setSee,rows,setRows}) => {
                 <Button
                   variant="contained"
                   size="small"
-                  onClick={() => handleDelete(row.id)}
+                  onClick={() => handleDelete(row._id)}
                   sx={{
                     backgroundColor: 'white',
                     color: 'red',
@@ -147,12 +154,38 @@ const FileTableBox = ({_id,setSee,rows,setRows}) => {
             </TableRow>
           ))}
           {rows.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={5} align="center">
-                No data available.
-              </TableCell>
-            </TableRow>
-          )}
+            <>
+            <IconButton>
+            <img src={cloud_upload}/>
+            </IconButton>
+            <Box>
+              <Typography fontWeight={400} fontSize="25px">
+              Select a file or drag and drop here (Podcast Media or Transcription Text)
+              </Typography>
+              <Typography fontWeight={400} variant='subtitle2' sx={{marginTop:'20px',fontSize:'16px'}}>
+              MP4, MOV, MP3, WAV, PDF, DOCX or TXT file
+              </Typography>
+              <Button
+  variant="outlined"
+  sx={{
+    marginTop:'40px',
+    color: '#7E22CE',
+    height:'40px',
+    width:'140px',
+    borderRadius:'192px',
+    borderColor: '#7E22CE',
+    '&:hover': {
+      borderColor: '#7E22CE',
+      backgroundColor: 'rgba(126, 34, 206, 0.08)', // subtle hover effect
+    },
+  }}
+>
+  Select File
+</Button>
+            </Box>
+            </>
+          )
+          }
         </TableBody>
       </Table>
     </TableContainer>

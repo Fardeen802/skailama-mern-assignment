@@ -6,7 +6,11 @@ import {
   TextField,
   Typography,
   Paper,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import QuesLogo from '../assets/QuesLogo.svg';
 import logo from '../assets/logo.svg';
@@ -16,6 +20,13 @@ import '@fontsource/poppins';
 const SignUpPage = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
+  };
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -26,7 +37,9 @@ const SignUpPage = () => {
     try {
       const result = await signup(form);
       setMessage('Signup successful!');
-      console.log(result);
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
     } catch (error) {
       setMessage(error.message || 'Signup failed.');
     }
@@ -128,9 +141,10 @@ const SignUpPage = () => {
                 fontSize: '30px',
                 color: '#7E22CE',
                 textAlign: 'center',
+                whiteSpace: 'pre-line',  
               }}
             >
-              Welcome to{" "}
+              Create an account on{"\n"}
               <Box component="span" sx={{ fontWeight: 700 }}>
                 Ques.AI
               </Box>
@@ -164,12 +178,24 @@ const SignUpPage = () => {
               <TextField
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 variant="outlined"
                 fullWidth
                 margin="normal"
                 value={form.password}
                 onChange={handleChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               <Button
@@ -197,6 +223,16 @@ const SignUpPage = () => {
               </Typography>
             )}
           </Paper>
+          <Typography variant="body2" sx={{ mt: 2, color: '#666' }}>
+              Have an account already?{' '}
+              <Box
+                component="span"
+                sx={{ color: '#7E22CE', cursor: 'pointer', fontWeight: 500 }}
+                onClick={() => navigate('/login')}
+              >
+                login
+              </Box>
+  </Typography>
         </Box>
       </Box>
     </Box>

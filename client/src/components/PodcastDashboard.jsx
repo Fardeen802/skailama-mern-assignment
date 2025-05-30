@@ -11,6 +11,8 @@ import {
   Stack,
 } from '@mui/material';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -140,7 +142,7 @@ const PodcastDashboard = () => {
             },
           }}
         >
-          <KeyboardDoubleArrowLeftIcon />
+           {!collapsed?<KeyboardDoubleArrowLeftIcon sx={{ color: 'white' }} />:<KeyboardDoubleArrowRightIcon sx={{ color: 'white' }}/>}
         </IconButton>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 'auto', width: '100%' }}>
@@ -170,6 +172,22 @@ const PodcastDashboard = () => {
               {sideBarItems[indexed]?.label}
             </Typography>
           </Box>
+          <Box sx={{display:'flex'}}>
+          <IconButton
+  
+          sx={{
+            color: 'black',           
+            border: '1px solid black', 
+            borderRadius: "100%",        
+            backgroundColor: 'transparent',
+            marginRight:'10px',
+            '&:hover': {
+              backgroundColor: 'None', 
+            },
+          }}
+        >
+          <NotificationsOutlinedIcon />
+        </IconButton>
           <IconButton
           onClick={handleLogout}
           sx={{
@@ -184,6 +202,7 @@ const PodcastDashboard = () => {
         >
           <LogoutIcon />
         </IconButton>
+        </Box>
         </Box>
 
         {/* Content */}

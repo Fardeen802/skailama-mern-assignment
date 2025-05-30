@@ -3,7 +3,7 @@ import axios from "axios";
 const SERVER_URL = "http://localhost:8000";
 const axiosInstance = axios.create({
   baseURL: SERVER_URL,
-  withCredentials: true, // ✅ this allows sending cookies
+  withCredentials: true,
 })
 export const login = async (userData) => {
   try {
@@ -19,7 +19,7 @@ export const login = async (userData) => {
 export const logout = async () => {
   try {
     await axios.post('http://localhost:8000/api/logout', {}, { withCredentials: true });
-    window.location.href = '/login'; // or use navigate('/login') if using react-router
+    window.location.href = '/login'; 
   } catch (error) {
     console.error('Logout failed:', error);
   }
@@ -59,7 +59,17 @@ export const fetchUserProjects = async () => {
 export const fetchFilesByProject = async (projectId) => {
   try {
     const response = await axios.post(`${SERVER_URL}/api/files/list`, { projectId },{withCredentials:true});
-    return response.data; // array of files
+    return response.data; 
+  } catch (error) {
+    console.error('Failed to fetch files:', error);
+    return [];
+  }
+};
+export const DeleteFilesOfProject = async (_id) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/files/delete`, { _id },{withCredentials:true});
+    console.log(response?.data);
+    return response.data;
   } catch (error) {
     console.error('Failed to fetch files:', error);
     return [];
@@ -71,7 +81,7 @@ export const CreateFilesByProject = async (payload) => {
       withCredentials: true,
     });
     console.log("response ",response?.data);
-    return response.data; // created file data
+    return response.data;
   } catch (error) {
     console.error('Failed to create file:', error);
     return null;
