@@ -30,6 +30,11 @@ app.options(/.*/, cors(corsOptions)); // Express 5 compliant CORS preflight
 app.use(cookieParser());
 app.use(express.json());
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the API' });
+});
+
 // ✅ NEW: Add verify-token route with detailed logging
 app.get('/api/verify-token', verifyToken, (req, res) => {
   console.log('✅ Token verification successful');
@@ -40,6 +45,15 @@ app.get('/api/verify-token', verifyToken, (req, res) => {
     message: 'Token is valid',
     user: req.user,
     cookies: Object.keys(req.cookies)
+  });
+});
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV
   });
 });
 
@@ -57,15 +71,6 @@ app.get('/api/test-cookie', (req, res) => {
     message: 'Cookie test',
     cookies: req.cookies,
     headers: req.headers
-  });
-});
-
-// Health check route
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
   });
 });
 
@@ -106,4 +111,5 @@ app.use(/.*/, (req, res) => {
 // Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log('==> Your service is live 🎉');
 });
