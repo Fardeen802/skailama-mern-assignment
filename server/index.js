@@ -8,7 +8,7 @@ const loginRoute = require('./api/auth');
 const logoutRoute = require('./api/auth');
 const projectsRoute = require('./api/userProjects');
 const fileRoute = require('./api/file');
-const {verifyToken} = require("./utils/tokenManagement");
+const { verifyToken } = require('./utils/tokenManagement');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
@@ -26,10 +26,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Handle preflight requests
-app.options('/:splat(*)', cors(corsOptions));
+app.options('/{*splat}', cors(corsOptions));
 
 app.use(cookieParser());
-app.use(express.json()); 
+app.use(express.json());
 
 // Test routes
 app.get('/test', (req, res) => {
@@ -41,7 +41,7 @@ app.get('/api/test-auth', verifyToken, (req, res) => {
 });
 
 app.get('/api/test-cookie', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Cookie test',
     cookies: req.cookies,
     headers: req.headers
@@ -57,31 +57,29 @@ app.get('/health', (req, res) => {
   });
 });
 
-mongoose.connect(
-    process.env.MONGODB_URI ,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  ).then(() => {
-    console.log('MongoDB connected');
-  }).catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
-// On server (auth.js route maybe)
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('MongoDB connected');
+}).catch((err) => {
+  console.error('MongoDB connection error:', err);
+});
 
-app.use("/api/files",fileRoute);
-app.use("/api/auth",projectsRoute);
-app.use('/api',logoutRoute);
-app.use('/api',loginRoute);
-app.use('/api/signup', signUpRoute); 
+// API routes
+app.use('/api/files', fileRoute);
+app.use('/api/auth', projectsRoute);
+app.use('/api', logoutRoute);
+app.use('/api', loginRoute);
+app.use('/api/signup', signUpRoute);
 
 // Error handling middleware
-app.use('/:splat(*)', (err, req, res, next) => {
+app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
   console.error('Request path:', req.path);
   console.error('Request params:', req.params);
-  res.status(500).json({ 
+  res.status(500).json({
     message: 'Something went wrong!',
     path: req.path,
     params: req.params
@@ -89,13 +87,13 @@ app.use('/:splat(*)', (err, req, res, next) => {
 });
 
 // Catch-all route for undefined routes
-app.use(/.*/, (req, res) => {
-  res.status(404).json({ 
+app.use('/{*splat}', (req, res) => {
+  res.status(404).json({
     message: 'Route not found',
     path: req.path
   });
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
+  console.log(`🚀 Server running on port ${PORT}`);
+});
