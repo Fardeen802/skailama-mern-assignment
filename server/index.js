@@ -26,7 +26,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Handle preflight requests
-app.options('*', cors(corsOptions));
+app.options('/:splat(*)', cors(corsOptions));
 
 app.use(cookieParser());
 app.use(express.json()); 
@@ -77,9 +77,23 @@ app.use('/api',loginRoute);
 app.use('/api/signup', signUpRoute); 
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+app.use('/:splat(*)', (err, req, res, next) => {
+  console.error('Error:', err.stack);
+  console.error('Request path:', req.path);
+  console.error('Request params:', req.params);
+  res.status(500).json({ 
+    message: 'Something went wrong!',
+    path: req.path,
+    params: req.params
+  });
+});
+
+// Catch-all route for undefined routes
+app.use(/.*/, (req, res) => {
+  res.status(404).json({ 
+    message: 'Route not found',
+    path: req.path
+  });
 });
 
 app.listen(PORT, () => {
