@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 const cors = require('cors');
 const mongoose = require('mongoose');
 const signUpRoute = require('./api/signUp');
@@ -75,6 +75,13 @@ app.use("/api/auth",projectsRoute);
 app.use('/api',logoutRoute);
 app.use('/api',loginRoute);
 app.use('/api/signup', signUpRoute); 
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
+
 app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
   });

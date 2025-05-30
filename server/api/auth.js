@@ -64,13 +64,18 @@ router.get('/verify-token', verifyToken, (req, res) => {
 router.post('/logout', (req, res) => {
   res.clearCookie('accessToken', {
     httpOnly: true,
-    sameSite: 'Strict',
-    secure: process.env.NODE_ENV === 'production', // true in production
+    sameSite: 'None',
+    secure: true,
+    domain: '.onrender.com',
+    path: '/'
   });
+  
   res.clearCookie('refreshToken', {
     httpOnly: true,
-    sameSite: 'Strict',
-    secure: process.env.NODE_ENV === 'production', // true in production
+    sameSite: 'None',
+    secure: true,
+    domain: '.onrender.com',
+    path: '/'
   });
 
   return res.status(200).json({ message: 'Logged out successfully' });
