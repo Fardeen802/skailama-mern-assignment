@@ -8,7 +8,7 @@ const PublicRoute = ({ element }) => {
 
   useEffect(() => {
     axios
-      .get('https://skailama-mern-assignment.onrender.com/api/verify-token', { withCredentials: true })
+      .get('https://ques-ai-backend-ka8z.onrender.com/api/verify-token', { withCredentials: true })
       .then(() => setAuthorized(true))   // already logged in
       .catch(() => setAuthorized(false)); // not logged in
   }, []);
