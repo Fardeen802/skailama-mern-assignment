@@ -91,13 +91,15 @@ app.use((err, req, res, next) => {
 });
 
 // ✅ Fixed catch-all 404 route
-app.use('*', (req, res) => {
+// Catch-all route for undefined endpoints
+app.use((req, res) => {
   console.log('❌ Route not found:', req.originalUrl);
   res.status(404).json({
     message: 'Route not found',
     path: req.originalUrl
   });
 });
+
 
 // Start server
 app.listen(PORT, () => {
