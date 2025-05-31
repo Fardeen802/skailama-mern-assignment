@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
       secure: true,
       sameSite: 'None',
       path: '/',
-      domain: 'skailama-mern-assignment.onrender.com'
+      domain: 'ques-ai-backend-ka8z.onrender.com'
     };
 
     res.cookie('accessToken', accessToken, {
@@ -78,21 +78,17 @@ router.get('/verify-token', verifyToken, (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-  res.clearCookie('accessToken', {
+  // Clear both cookies with the same options as when setting them
+  const cookieOptions = {
     httpOnly: true,
-    sameSite: 'None',
     secure: true,
-    domain: 'skailama-mern-assignment.onrender.com',
-    path: '/'
-  });
-  
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
     sameSite: 'None',
-    secure: true,
-    domain: 'skailama-mern-assignment.onrender.com',
-    path: '/'
-  });
+    path: '/',
+    domain: 'ques-ai-backend-ka8z.onrender.com'
+  };
+
+  res.clearCookie('accessToken', cookieOptions);
+  res.clearCookie('refreshToken', cookieOptions);
 
   return res.status(200).json({ message: 'Logged out successfully' });
 });

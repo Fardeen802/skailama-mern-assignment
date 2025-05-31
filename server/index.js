@@ -13,7 +13,7 @@ require('dotenv').config();
 
 // CORS configuration
 const corsOptions = {
-  origin: ['https://skailama-mern-assignment.onrender.com', 'http://localhost:3000'],
+  origin: ['https://ques-ai-backend-ka8z.onrender.com', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
