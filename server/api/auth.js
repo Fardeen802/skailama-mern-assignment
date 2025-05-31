@@ -85,6 +85,11 @@ router.post('/logout', (req, res) => {
 });
 
 // ✅ Login state check
-router.get('/verify-token', verifyLoginOnly);
+router.get('/verify-token', verifyLoginOnly, (req, res) => {
+  return res.status(200).json({ userId: req.user.userId });
+});
+
 
 module.exports = router;
+
+
