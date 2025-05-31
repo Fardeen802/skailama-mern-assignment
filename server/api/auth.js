@@ -17,16 +17,21 @@ router.post('/login', async (req, res) => {
     console.log('🔍 Login attempt received:', { email: req.body.email });
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      console.log('❌ Missing credentials');
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
       console.log('❌ User not found:', email);
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) {
       console.log('❌ Password mismatch for user:', email);
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     console.log('✅ Login successful for user:', email);
@@ -42,6 +47,7 @@ router.post('/login', async (req, res) => {
       domain: '.onrender.com'
     };
 
+    // Set cookies
     res.cookie('accessToken', accessToken, {
       ...cookieOptions,
       maxAge: 15 * 60 * 1000 // 15 minutes
@@ -58,6 +64,7 @@ router.post('/login', async (req, res) => {
       options: cookieOptions
     });
 
+    // Send response with user data
     return res.status(200).json({ 
       message: 'Login successful',
       user: {
