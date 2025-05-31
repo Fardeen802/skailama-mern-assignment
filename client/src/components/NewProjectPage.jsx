@@ -45,29 +45,42 @@ const NewProjectPage = () => {
     getProjects();
   }, []);
   const formatLastEdited = (timestamp) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-  
-    const isToday = date.toDateString() === now.toDateString();
-  
-    const yesterday = new Date();
-    yesterday.setDate(now.getDate() - 1);
-    const isYesterday = date.toDateString() === yesterday.toDateString();
-  
-    if (isToday) {
-      return `${date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      })}`;
-    } else if (isYesterday) {
-      return `Yesterday`;
-    } else {
-      return `${date.toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })}`;
+    if (!timestamp) return 'No date';
+    
+    try {
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date:', timestamp);
+        return 'Invalid date';
+      }
+
+      const now = new Date();
+      const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+      
+      if (diffInDays === 0) {
+        return `Today at ${date.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        })}`;
+      } else if (diffInDays === 1) {
+        return `Yesterday at ${date.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        })}`;
+      } else if (diffInDays < 7) {
+        return `${diffInDays} days ago`;
+      } else {
+        return date.toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      }
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
     }
   };
   
