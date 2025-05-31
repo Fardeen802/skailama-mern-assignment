@@ -33,22 +33,29 @@ router.post('/login', async (req, res) => {
     const accessToken = jwt.sign({ userId: existingUser._id }, ACCESS_SECRET, { expiresIn: '15m' });
     const refreshToken = jwt.sign({ userId: existingUser._id }, REFRESH_SECRET, { expiresIn: '7d' });
 
-    res.cookie('accessToken', accessToken, {
+    // Set cookies with proper configuration
+    const cookieOptions = {
       httpOnly: true,
       secure: true,
       sameSite: 'None',
-      maxAge: 15 * 60 * 1000,
-      domain: '.onrender.com',
-      path: '/'
+      path: '/',
+      domain: 'ques-ai-backend-ka8z.onrender.com'
+    };
+
+    res.cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000 // 15 minutes
     });
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: '.onrender.com',
-      path: '/'
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    console.log('✅ Cookies set:', {
+      accessToken: !!accessToken,
+      refreshToken: !!refreshToken,
+      options: cookieOptions
     });
 
     return res.status(200).json({ 

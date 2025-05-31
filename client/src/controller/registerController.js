@@ -11,6 +11,26 @@ const axiosInstance = axios.create({
   }
 });
 
+// Add response interceptor for debugging
+axiosInstance.interceptors.response.use(
+  response => {
+    console.log('✅ Response:', {
+      status: response.status,
+      headers: response.headers,
+      cookies: document.cookie
+    });
+    return response;
+  },
+  error => {
+    console.error('❌ Request failed:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      cookies: document.cookie
+    });
+    return Promise.reject(error);
+  }
+);
+
 export const login = async (userData) => {
   try {
     console.log('Attempting login with:', { ...userData, password: '***' });
