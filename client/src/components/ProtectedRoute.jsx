@@ -17,9 +17,16 @@ const ProtectedRoute = ({ element }) => {
   const [authorized, setAuthorized] = useState(null);
 
   useEffect(() => {
-    axiosInstance.get('/api/verify-token')
-      .then(() => setAuthorized(true))
-      .catch(() => setAuthorized(false));
+    const verifyAuth = async () => {
+      try {
+        await axiosInstance.get('/api/verify-token');
+        setAuthorized(true);
+      } catch (error) {
+        console.log('Auth verification failed:', error);
+        setAuthorized(false);
+      }
+    };
+    verifyAuth();
   }, []);
 
   if (authorized === null) return <div>Loading...</div>;

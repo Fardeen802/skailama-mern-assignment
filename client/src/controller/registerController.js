@@ -50,9 +50,14 @@ export const login = async (userData) => {
 export const logout = async () => {
   try {
     await axiosInstance.post('/api/auth/logout');
-    window.location.href = '/login'; 
+    // Clear any local storage or state if needed
+    localStorage.clear();
+    // Use navigate instead of window.location for better routing
+    window.location.href = '/login';
   } catch (error) {
     console.error('Logout failed:', error);
+    // Even if the server request fails, redirect to login
+    window.location.href = '/login';
   }
 };
 

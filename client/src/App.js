@@ -12,11 +12,11 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-           <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/dashboard" element={<NewProjectPage />}  />
-          <Route path="/podcast" element={<PodcastDashboard />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
+          <Route path="/signup" element={<PublicRoute element={<SignUpPage />} />} />
+          <Route path="/dashboard" element={<ProtectedRoute element={<NewProjectPage />} />} />
+          <Route path="/podcast" element={<ProtectedRoute element={<PodcastDashboard />} />} />
         </Routes>
       </div>
     </Router>

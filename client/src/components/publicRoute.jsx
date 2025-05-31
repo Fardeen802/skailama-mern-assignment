@@ -5,12 +5,28 @@ import { Navigate } from 'react-router-dom';
 
 const PublicRoute = ({ element }) => {
   const [authorized, setAuthorized] = useState(null);
-  const SERVER_URL = "https://skailama-mern-assignment.onrender.com";
+  const SERVER_URL = "https://ques-ai-backend-ka8z.onrender.com";
+
+  const axiosInstance = axios.create({
+    baseURL: SERVER_URL,
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+
   useEffect(() => {
-    axios
-      .get(`${SERVER_URL}/api/verify-token`, { withCredentials: true })
-      .then(() => setAuthorized(true))   // already logged in
-      .catch(() => setAuthorized(false)); // not logged in
+    const verifyAuth = async () => {
+      try {
+        await axiosInstance.get('/api/verify-token');
+        setAuthorized(true);
+      } catch (error) {
+        console.log('Auth verification failed:', error);
+        setAuthorized(false);
+      }
+    };
+    verifyAuth();
   }, []);
 
   if (authorized === null) return <div>Loading...</div>;
