@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
       secure: true,
       sameSite: 'None',
       path: '/',
-      domain: 'ques-ai-backend-ka8z.onrender.com'
+      domain: 'skailama-mern-assignment.onrender.com'
     };
 
     res.cookie('accessToken', accessToken, {
@@ -82,7 +82,7 @@ router.post('/logout', (req, res) => {
     httpOnly: true,
     sameSite: 'None',
     secure: true,
-    domain: '.onrender.com',
+    domain: 'skailama-mern-assignment.onrender.com',
     path: '/'
   });
   
@@ -90,7 +90,7 @@ router.post('/logout', (req, res) => {
     httpOnly: true,
     sameSite: 'None',
     secure: true,
-    domain: '.onrender.com',
+    domain: 'skailama-mern-assignment.onrender.com',
     path: '/'
   });
 

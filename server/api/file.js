@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const File = require("../models/file.model");
 const mongoose = require('mongoose');
+const { verifyToken } = require('../utils/tokenManagement');
 
 // Create a new file for a given project
 router.post('/create', async (req, res) => {
@@ -22,7 +23,7 @@ router.post('/create', async (req, res) => {
     }
   });
 
-  router.post('/delete', async (req, res) => {
+  router.post('/delete', verifyToken, async (req, res) => {
     try {
       const { _id } = req.body;
       console.log("_id",_id);
@@ -44,7 +45,7 @@ router.post('/create', async (req, res) => {
   });
   
 // Get all files for a specific project
-router.post('/list', async (req, res) => {
+router.post('/list', verifyToken, async (req, res) => {
     const { projectId } = req.body;
   
     if (!projectId) {
