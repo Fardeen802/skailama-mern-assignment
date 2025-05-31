@@ -22,12 +22,11 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
-// Apply CORS middleware
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions)); // Allow all preflight OPTIONS requests
-
+// Apply middleware in correct order
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Root route
 app.get('/', (req, res) => {
@@ -98,8 +97,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Catch-all route for undefined endpoints using regex pattern
-app.use(/.*/, (req, res) => {
+// Catch-all route for undefined endpoints
+app.use('*', (req, res) => {
   console.log('❌ Route not found:', req.originalUrl);
   res.status(404).json({
     message: 'Route not found',

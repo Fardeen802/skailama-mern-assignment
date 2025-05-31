@@ -80,11 +80,10 @@ router.post('/login', async (req, res) => {
 });
 
 // router.post('/refresh-token', refreshAccessToken);
-router.get('/verify-token', verifyToken, (req, res) => {
-  res.json({ valid: true, user: req.user });
-});
-
 router.post('/logout', (req, res) => {
+  console.log('🔍 Logout attempt');
+  console.log('Current cookies:', req.cookies);
+
   // Clear both cookies with the same options as when setting them
   const cookieOptions = {
     httpOnly: true,
@@ -97,6 +96,7 @@ router.post('/logout', (req, res) => {
   res.clearCookie('accessToken', cookieOptions);
   res.clearCookie('refreshToken', cookieOptions);
 
+  console.log('✅ Cookies cleared');
   return res.status(200).json({ message: 'Logged out successfully' });
 });
 
