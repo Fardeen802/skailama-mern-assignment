@@ -26,7 +26,7 @@ const corsOptions = {
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options(/.*/, cors(corsOptions)); // for preflight CORS
 
 // Root route
 app.get('/', (req, res) => {
@@ -98,11 +98,11 @@ app.use((err, req, res, next) => {
 });
 
 // Catch-all route for undefined endpoints
-app.use('*', (req, res) => {
-  console.log('❌ Route not found:', req.originalUrl);
+app.use('/{*splat}', (req, res) => {
+  console.log('❌ Route not found:', req.path);
   res.status(404).json({
     message: 'Route not found',
-    path: req.originalUrl
+    path: req.path
   });
 });
 
