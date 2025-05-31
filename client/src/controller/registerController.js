@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
   }
 });
 
-// Add response interceptor for debugging
+// ✅ Optional: Auto redirect on 401
 axiosInstance.interceptors.response.use(
   response => {
     console.log('✅ Response:', {
@@ -22,37 +22,37 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   error => {
+    if (error.response?.status === 401) {
+      console.warn("⚠️ Unauthorized, redirecting to login...");
+      window.location.href = "/login";
+    }
+
     console.error('❌ Request failed:', {
       status: error.response?.status,
       data: error.response?.data,
       cookies: document.cookie
     });
+
     return Promise.reject(error);
   }
 );
 
 export const login = async (userData) => {
   try {
-    console.log('Attempting login with:', { ...userData, password: '***' });
+    console.log('Attempting login for:', userData.email);
     const res = await axiosInstance.post('/api/auth/login', userData);
     console.log('Login response:', res.data);
-    console.log('Cookies after login:', document.cookie);
     return res;
   } catch (error) {
-    console.error('Login error details:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
+    console.error('Login error:', error.response?.data || error.message);
     throw error.response?.data || error;
   }
 };
 
 export const logout = async () => {
   try {
-    console.log('Cookies before logout:', document.cookie);
     await axiosInstance.post('/api/auth/logout');
-    console.log('Cookies after logout:', document.cookie);
+    console.log('✅ Logged out');
     localStorage.clear();
     window.location.href = '/login';
   } catch (error) {
@@ -72,9 +72,10 @@ export const signup = async (userData) => {
   }
 };
 
+// ✅ FIXED: Corrected endpoint path
 export const createProject = async (title) => {
   try {
-    const response = await axiosInstance.post('/api/auth/create', { title });
+    const response = await axiosInstance.post('/api/projects/create', { title });
     console.log('Project created:', response.data);
     return response;
   } catch (error) {
@@ -83,9 +84,10 @@ export const createProject = async (title) => {
   }
 };
 
+// ✅ FIXED: Corrected endpoint path
 export const fetchUserProjects = async () => {
   try {
-    const response = await axiosInstance.get('/api/auth/projectsList');
+    const response = await axiosInstance.get('/api/projects/projectsList');
     console.log("Projects:", response.data);
     return response;
   } catch (error) {
@@ -97,9 +99,9 @@ export const fetchUserProjects = async () => {
 export const fetchFilesByProject = async (projectId) => {
   try {
     const response = await axiosInstance.post('/api/files/list', { projectId });
-    return response.data; 
+    return response.data;
   } catch (error) {
-    console.error('Failed to fetch files:', error);
+    console.error('Failed to fetch files:', error.response?.data || error.message);
     return [];
   }
 };
@@ -110,7 +112,7 @@ export const DeleteFilesOfProject = async (_id) => {
     console.log(response?.data);
     return response.data;
   } catch (error) {
-    console.error('Failed to delete file:', error);
+    console.error('Failed to delete file:', error.response?.data || error.message);
     return [];
   }
 };
@@ -118,11 +120,10 @@ export const DeleteFilesOfProject = async (_id) => {
 export const CreateFilesByProject = async (payload) => {
   try {
     const response = await axiosInstance.post('/api/files/create', payload);
-    console.log("response ", response?.data);
+    console.log("File created:", response?.data);
     return response.data;
   } catch (error) {
-    console.error('Failed to create file:', error);
+    console.error('Failed to create file:', error.response?.data || error.message);
     return null;
   }
 };
-
