@@ -36,6 +36,7 @@ export const login = async (userData) => {
     console.log('Attempting login with:', { ...userData, password: '***' });
     const res = await axiosInstance.post('/api/auth/login', userData);
     console.log('Login response:', res.data);
+    console.log('Cookies after login:', document.cookie);
     return res;
   } catch (error) {
     console.error('Login error details:', {
@@ -49,14 +50,13 @@ export const login = async (userData) => {
 
 export const logout = async () => {
   try {
+    console.log('Cookies before logout:', document.cookie);
     await axiosInstance.post('/api/auth/logout');
-    // Clear any local storage or state if needed
+    console.log('Cookies after logout:', document.cookie);
     localStorage.clear();
-    // Use navigate instead of window.location for better routing
     window.location.href = '/login';
   } catch (error) {
     console.error('Logout failed:', error);
-    // Even if the server request fails, redirect to login
     window.location.href = '/login';
   }
 };

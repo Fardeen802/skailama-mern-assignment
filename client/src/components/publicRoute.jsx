@@ -19,10 +19,20 @@ const PublicRoute = ({ element }) => {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        await axiosInstance.get('/api/verify-token');
+        console.log('Checking public route auth status...');
+        console.log('Current cookies:', document.cookie);
+        
+        const response = await axiosInstance.get('/api/verify-token');
+        console.log('Public route auth verification response:', response.data);
+        console.log('Cookies after verification:', document.cookie);
+        
         setAuthorized(true);
       } catch (error) {
-        console.log('Auth verification failed:', error);
+        console.log('Public route auth verification failed:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          cookies: document.cookie
+        });
         setAuthorized(false);
       }
     };

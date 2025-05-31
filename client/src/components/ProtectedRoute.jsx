@@ -19,10 +19,20 @@ const ProtectedRoute = ({ element }) => {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        await axiosInstance.get('/api/verify-token');
+        console.log('Checking auth status...');
+        console.log('Current cookies:', document.cookie);
+        
+        const response = await axiosInstance.get('/api/verify-token');
+        console.log('Auth verification response:', response.data);
+        console.log('Cookies after verification:', document.cookie);
+        
         setAuthorized(true);
       } catch (error) {
-        console.log('Auth verification failed:', error);
+        console.error('Auth verification failed:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          cookies: document.cookie
+        });
         setAuthorized(false);
       }
     };
