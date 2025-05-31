@@ -98,13 +98,14 @@ app.use((err, req, res, next) => {
 });
 
 // Catch-all route for undefined endpoints
-app.use('/{*splat}', (req, res) => {
-  console.log('❌ Route not found:', req.path);
+app.use('*', (req, res) => {
+  console.log('❌ Route not found:', req.originalUrl);
   res.status(404).json({
     message: 'Route not found',
-    path: req.path
+    path: req.originalUrl
   });
 });
+
 
 // Start the server
 app.listen(PORT, () => {
