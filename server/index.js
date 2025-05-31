@@ -13,19 +13,18 @@ require('dotenv').config();
 
 // CORS configuration
 const corsOptions = {
-  origin: ['https://ques-ai-backend-ka8z.onrender.com', 'http://localhost:3000'],
+  origin: 'https://skailama-mern-assignment.onrender.com',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   exposedHeaders: ['Set-Cookie'],
   preflightContinue: false,
-  optionsSuccessStatus: 204,
-  maxAge: 86400 // 24 hours
+  optionsSuccessStatus: 204
 };
 
-// Apply CORS middleware with regex pattern
+// Apply CORS middleware
 app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions)); // Express 5 compliant CORS preflight
+app.options(/.*/, cors(corsOptions)); // Allow all preflight OPTIONS requests
 
 app.use(cookieParser());
 app.use(express.json());

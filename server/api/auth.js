@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
       secure: true,
       sameSite: 'None',
       path: '/',
-      domain: 'ques-ai-backend-ka8z.onrender.com'
+      domain: '.onrender.com'
     };
 
     res.cookie('accessToken', accessToken, {
@@ -84,7 +84,7 @@ router.post('/logout', (req, res) => {
     secure: true,
     sameSite: 'None',
     path: '/',
-    domain: 'ques-ai-backend-ka8z.onrender.com'
+    domain: '.onrender.com'
   };
 
   res.clearCookie('accessToken', cookieOptions);
