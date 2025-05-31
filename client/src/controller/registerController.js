@@ -51,15 +51,16 @@ export const login = async (userData) => {
 
 export const logout = async () => {
   try {
-    await axiosInstance.post('/api/auth/logout');
+    await axiosInstance.post('/api/auth/logout', {}, { withCredentials: true }); // <-- This is key
     console.log('✅ Logged out');
     localStorage.clear();
     window.location.href = '/login';
   } catch (error) {
-    console.error('Logout failed:', error);
+    console.error('❌ Logout failed:', error);
     window.location.href = '/login';
   }
 };
+
 
 export const signup = async (userData) => {
   try {

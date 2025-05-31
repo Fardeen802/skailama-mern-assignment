@@ -70,19 +70,25 @@ router.post('/login', async (req, res) => {
 
 // ✅ Logout
 router.post('/logout', (req, res) => {
-  const cookieOptions = {
+  res.clearCookie('accessToken', {
     httpOnly: true,
     secure: true,
     sameSite: 'None',
     path: '/',
     domain: '.onrender.com'
-  };
+  });
 
-  res.clearCookie('accessToken', cookieOptions);
-  res.clearCookie('refreshToken', cookieOptions);
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+    path: '/',
+    domain: '.onrender.com'
+  });
 
-  return res.status(200).json({ message: 'Logged out successfully' });
+  res.status(200).json({ message: 'Logged out successfully' });
 });
+
 
 // ✅ Login state check
 router.get('/verify-token', verifyLoginOnly, (req, res) => {
