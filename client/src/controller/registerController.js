@@ -10,15 +10,31 @@ const axiosInstance = axios.create({
   }
 });
 
-// ✅ Optional: Auto redirect on 401
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Request interceptor for adding auth token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
+// Response interceptor for handling errors
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const login = async (userData) => {
   try {
@@ -35,9 +51,6 @@ export const login = async (userData) => {
     localStorage.setItem('accessToken', token);
     console.log('✅ Token stored successfully');
     
-    // Add a small delay to ensure token is stored
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
     return res;
   } catch (error) {
     console.error('❌ Login error:', error.response?.data || error.message);
@@ -45,15 +58,10 @@ export const login = async (userData) => {
   }
 };
 
-
 export const logout = () => {
-  console.log('🔑 Token before logout:', !!localStorage.getItem('accessToken'));
   localStorage.removeItem('accessToken');
-  console.log('🔑 Token after logout:', !!localStorage.getItem('accessToken'));
   window.location.href = '/login';
 };
-
-
 
 export const signup = async (userData) => {
   try {
@@ -122,9 +130,6 @@ export const CreateFilesByProject = async (payload) => {
   }
 };
 
-
 export const isAuthenticated = () => {
-  const hasToken = !!localStorage.getItem('accessToken');
-  console.log('🔒 Authentication check:', hasToken);
-  return hasToken;
+  return !!localStorage.getItem('accessToken');
 };

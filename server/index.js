@@ -8,26 +8,24 @@ const authRoute = require('./api/auth');
 const projectsRoute = require('./api/userProjects');
 const fileRoute = require('./api/file');
 const { verifyToken } = require('./utils/tokenManagement');
-const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // CORS configuration
-// const cors = require('cors');
-
 const corsOptions = {
-  origin: ['https://skailama-mern-assignment.vercel.app'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: [
+    'https://skailama-mern-assignment.vercel.app', // Production
+    'http://localhost:3000', // Development
+    'http://localhost:5173'  // Vite default port
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
 
-
 // Middleware
-app.use(cookieParser());
 app.use(express.json());
-// app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Handle preflight
 
 // Health check
 app.get('/health', (req, res) => {
@@ -48,8 +46,7 @@ app.get('/api/verify-token', verifyToken, (req, res) => {
   console.log('✅ Token verification successful');
   res.status(200).json({
     message: 'Token is valid',
-    user: req.user,
-    cookies: Object.keys(req.cookies)
+    user: req.user
   });
 });
 
@@ -88,7 +85,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ✅ Fixed catch-all 404 route
 // Catch-all route for undefined endpoints
 app.use((req, res) => {
   console.log('❌ Route not found:', req.originalUrl);
@@ -97,7 +93,6 @@ app.use((req, res) => {
     path: req.originalUrl
   });
 });
-
 
 // Start server
 app.listen(PORT, () => {
