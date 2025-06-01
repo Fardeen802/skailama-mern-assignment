@@ -22,15 +22,25 @@ axiosInstance.interceptors.request.use((config) => {
 
 export const login = async (userData) => {
   try {
+    console.log('🔑 Attempting login...');
     const res = await axiosInstance.post('/api/auth/login', userData);
+    console.log('📦 Login response:', res.data);
+    
     const token = res.data.token;
-    if (token) {
-      localStorage.setItem('accessToken', token);
-      console.log('✅ Token stored in localStorage:', !!localStorage.getItem('accessToken'));
+    if (!token) {
+      console.error('❌ No token received in response');
+      throw new Error('No token received');
     }
+
+    localStorage.setItem('accessToken', token);
+    console.log('✅ Token stored successfully');
+    
+    // Add a small delay to ensure token is stored
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     return res;
   } catch (error) {
-    console.error('Login error:', error.response?.data || error.message);
+    console.error('❌ Login error:', error.response?.data || error.message);
     throw error.response?.data || error;
   }
 };

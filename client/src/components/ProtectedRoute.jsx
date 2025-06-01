@@ -1,17 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const SERVER_URL = "https://ques-ai-backend-ka8z.onrender.com";
-
-const axiosInstance = axios.create({
-  baseURL: SERVER_URL,
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
-});
+const SERVER_URL = process.env.REACT_APP_API_URL || "https://ques-ai-backend-ka8z.onrender.com";
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
@@ -31,16 +22,20 @@ const ProtectedRoute = ({ children }) => {
           return;
         }
 
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/verify-token`, {
+        const response = await axios.get(`${SERVER_URL}/api/verify-token`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
 
         console.log('✅ Token verification response:', response.status);
-        setIsAuth(true);
+        if (response.status === 200) {
+          setIsAuth(true);
+        } else {
+          throw new Error('Invalid token');
+        }
       } catch (error) {
-        console.error('❌ Authentication error:', error.response?.status);
+        console.error('❌ Authentication error:', error.response?.status || error.message);
         localStorage.removeItem('accessToken');
         navigate('/login');
       } finally {
