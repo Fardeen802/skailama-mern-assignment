@@ -12,20 +12,21 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // CORS configuration
+const cors = require('cors');
+
 const corsOptions = {
-  origin: 'https://skailama-mern-assignment.onrender.com',
+  origin: ['https://skailama-mern-assignment.vercel.app'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Set-Cookie'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
+
+app.use(cors(corsOptions));
+
 
 // Middleware
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Handle preflight
 
 // Health check

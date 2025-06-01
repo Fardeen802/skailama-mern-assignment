@@ -1,10 +1,9 @@
 import axios from "axios";
 
-const SERVER_URL = "https://ques-ai-backend-ka8z.onrender.com";
+const SERVER_URL = process.env.REACT_APP_API_URL || "https://ques-ai-backend-ka8z.onrender.com";
 
 const axiosInstance = axios.create({
   baseURL: SERVER_URL,
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -12,36 +11,23 @@ const axiosInstance = axios.create({
 });
 
 // ✅ Optional: Auto redirect on 401
-axiosInstance.interceptors.response.use(
-  response => {
-    console.log('✅ Response:', {
-      status: response.status,
-      headers: response.headers,
-      cookies: document.cookie
-    });
-    return response;
-  },
-  error => {
-    if (error.response?.status === 401) {
-      console.warn("⚠️ Unauthorized, redirecting to login...");
-      window.location.href = "/login";
-    }
-
-    console.error('❌ Request failed:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      cookies: document.cookie
-    });
-
-    return Promise.reject(error);
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
+
 
 export const login = async (userData) => {
   try {
-    console.log('Attempting login for:', userData.email);
     const res = await axiosInstance.post('/api/auth/login', userData);
-    console.log('Login response:', res.data);
+    const token = res.data.token;
+    if (token) {
+      localStorage.setItem('accessToken', token);
+      console.log('✅ Token stored in localStorage:', !!localStorage.getItem('accessToken'));
+    }
     return res;
   } catch (error) {
     console.error('Login error:', error.response?.data || error.message);
@@ -49,17 +35,14 @@ export const login = async (userData) => {
   }
 };
 
-export const logout = async () => {
-  try {
-    await axiosInstance.post('/api/auth/logout', {}, { withCredentials: true }); // <-- This is key
-    console.log('✅ Logged out');
-    localStorage.clear();
-    window.location.href = '/login';
-  } catch (error) {
-    console.error('❌ Logout failed:', error);
-    window.location.href = '/login';
-  }
+
+export const logout = () => {
+  console.log('🔑 Token before logout:', !!localStorage.getItem('accessToken'));
+  localStorage.removeItem('accessToken');
+  console.log('🔑 Token after logout:', !!localStorage.getItem('accessToken'));
+  window.location.href = '/login';
 };
+
 
 
 export const signup = async (userData) => {
@@ -127,4 +110,11 @@ export const CreateFilesByProject = async (payload) => {
     console.error('Failed to create file:', error.response?.data || error.message);
     return null;
   }
+};
+
+
+export const isAuthenticated = () => {
+  const hasToken = !!localStorage.getItem('accessToken');
+  console.log('🔒 Authentication check:', hasToken);
+  return hasToken;
 };

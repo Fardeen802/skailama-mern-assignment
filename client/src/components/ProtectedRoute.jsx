@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const SERVER_URL = "https://ques-ai-backend-ka8z.onrender.com";
 
@@ -13,36 +13,49 @@ const axiosInstance = axios.create({
   }
 });
 
-const ProtectedRoute = ({ element }) => {
-  const [authorized, setAuthorized] = useState(null);
+const ProtectedRoute = ({ children }) => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
-    const verifyAuth = async () => {
+    const checkAuth = async () => {
       try {
-        console.log('Checking auth status...');
-        console.log('Current cookies:', document.cookie);
+        console.log('🔍 Checking authentication state...');
+        const token = localStorage.getItem('accessToken');
+        console.log('🔑 Token present:', !!token);
         
-        const response = await axiosInstance.get('/api/verify-token');
-        console.log('Auth verification response:', response.data);
-        console.log('Cookies after verification:', document.cookie);
-        
-        setAuthorized(true);
-      } catch (error) {
-        console.error('Auth verification failed:', {
-          status: error.response?.status,
-          data: error.response?.data,
-          cookies: document.cookie
+        if (!token) {
+          console.log('❌ No token found, redirecting to login');
+          navigate('/login');
+          return;
+        }
+
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/verify-token`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
-        setAuthorized(false);
+
+        console.log('✅ Token verification response:', response.status);
+        setIsAuth(true);
+      } catch (error) {
+        console.error('❌ Authentication error:', error.response?.status);
+        localStorage.removeItem('accessToken');
+        navigate('/login');
+      } finally {
+        setIsLoading(false);
       }
     };
-    verifyAuth();
-  }, []);
 
-  if (authorized === null) return <div>Loading...</div>;
-  if (!authorized) return <Navigate to="/login" replace />;
+    checkAuth();
+  }, [navigate]);
 
-  return element;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return isAuth ? children : null;
 };
 
 export default ProtectedRoute;

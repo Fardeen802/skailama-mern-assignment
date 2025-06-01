@@ -44,15 +44,6 @@ router.post('/login', async (req, res) => {
       domain: '.onrender.com'
     };
 
-    res.cookie('accessToken', accessToken, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
 
     return res.status(200).json({
       message: 'Login successful',
@@ -70,24 +61,9 @@ router.post('/login', async (req, res) => {
 
 // ✅ Logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('accessToken', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-    path: '/',
-    domain: '.onrender.com'
-  });
-
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-    path: '/',
-    domain: '.onrender.com'
-  });
-
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.status(200).json({ message: 'Client-side logout successful' });
 });
+
 
 
 // ✅ Login state check
