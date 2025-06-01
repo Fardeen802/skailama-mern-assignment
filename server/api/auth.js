@@ -33,31 +33,29 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const accessToken = jwt.sign({ userId: existingUser._id }, ACCESS_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ userId: existingUser._id }, REFRESH_SECRET, { expiresIn: '7d' });
-
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      path: '/',
-      domain: '.onrender.com'
-    };
-
+    // ✅ Generate access token
+    const accessToken = jwt.sign(
+      { userId: existingUser._id },
+      ACCESS_SECRET,
+      { expiresIn: '15m' }
+    );
 
     return res.status(200).json({
       message: 'Login successful',
+      token: accessToken, // ✅ Send token to frontend
       user: {
         id: existingUser._id,
         email: existingUser.email,
         name: existingUser.name
       }
     });
+
   } catch (error) {
     console.error('❌ Login error:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 // ✅ Logout
 router.post('/logout', (req, res) => {
