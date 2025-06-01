@@ -12,7 +12,7 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // CORS configuration
-const cors = require('cors');
+// const cors = require('cors');
 
 const corsOptions = {
   origin: ['https://skailama-mern-assignment.vercel.app'],
