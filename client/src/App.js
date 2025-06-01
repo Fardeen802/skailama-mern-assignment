@@ -15,8 +15,16 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
           <Route path="/signup" element={<PublicRoute element={<SignUpPage />} />} />
-          <Route path="/dashboard" element={<ProtectedRoute element={<NewProjectPage />} />} />
-          <Route path="/podcast" element={<ProtectedRoute element={<PodcastDashboard />} />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <NewProjectPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/podcast" element={
+            <ProtectedRoute>
+              <PodcastDashboard />
+            </ProtectedRoute>
+          } />
         </Routes>
       </div>
     </Router>
