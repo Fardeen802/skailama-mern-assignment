@@ -50,6 +50,7 @@ const ProtectedRoute = ({ children }) => {
     return <div>Loading...</div>;
   }
 
+  console.log('👶 ProtectedRoute children:', children);
   return isAuth ? children : null;
 };
 
